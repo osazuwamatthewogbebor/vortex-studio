@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vortex Studio — The Zero-Cloud Media Engine</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables & Theming Tokens */
+    :root[data-theme="light"] {
+      --bg-page: #F8F9FA;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F1F3F5;
+      --bg-dropzone: #FAFBFC;
+      --border-subtle: #E9ECEF;
+      --border-strong: #DEE2E6;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-tertiary: #94A3B8;
+      --accent: #0F172A;
+      --accent-hover: #1E293B;
+      --accent-text: #FFFFFF;
+      --badge-bg: #ECFDF5;
+      --badge-text: #059669;
+      --badge-border: #A7F3D0;
+      --indicator-active: #10B981;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
+      --code-bg: #1E293B;
+      --code-text: #E2E8F0;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-page: #0A0B0D;
+      --bg-card: #121316;
+      --bg-subtle: #181A1F;
+      --bg-dropzone: #0E0F12;
+      --border-subtle: #22252A;
+      --border-strong: #2E323A;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-tertiary: #64748B;
+      --accent: #F8FAFC;
+      --accent-hover: #E2E8F0;
+      --accent-text: #0A0B0D;
+      --badge-bg: rgba(16, 185, 129, 0.12);
+      --badge-text: #34D399;
+      --badge-border: rgba(52, 211, 153, 0.2);
+      --indicator-active: #34D399;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+      --code-bg: #08090A;
+      --code-text: #CBD5E1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Layout Wrapper */
+    .app-wrapper {
+      width: 100%;
+      max-width: 1080px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Top Global Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 2rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--text-primary);
+      color: var(--bg-page);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.5rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-subtle);
+    }
+
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+    }
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    /* Landing Section */
+    #landing-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge span {
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      max-width: 800px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 620px;
+      line-height: 1.55;
+      margin-bottom: 2.25rem;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .btn-hero {
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      padding: 0.9rem 1.8rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: var(--shadow-md);
+    }
+    .btn-hero:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Bento Grid for Landing */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+
+    .bento-icon {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .bento-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .bento-sub {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Studio Workspace View */
+    #studio-view {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* Tool Tabs Bar */
+    .tools-nav {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem;
+      border-radius: 14px;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .tools-nav::-webkit-scrollbar { display: none; }
+
+    .tool-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.55rem 0.85rem;
+      border-radius: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .tool-tab:hover { color: var(--text-primary); }
+    .tool-tab.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Main Working Area */
+    .studio-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .panel.active { display: flex; }
+
+    .panel-meta h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .panel-meta p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    /* Drag & Drop Areas */
+    .dropzone {
+      border: 1.5px dashed var(--border-strong);
+      background: var(--bg-dropzone);
+      border-radius: 14px;
+      padding: 1.75rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      position: relative;
+    }
+    .dropzone:hover {
+      border-color: var(--text-secondary);
+      background: var(--bg-subtle);
+    }
+    .dropzone input { display: none; }
+    .drop-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .drop-hint {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+    .file-badge {
+      display: none;
+      margin-top: 0.4rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+    }
+
+    /* Controls Grid */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    input[type="text"], input[type="number"], select {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.7rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      outline: none;
+      width: 100%;
+    }
+    input:focus, select:focus {
+      border-color: var(--text-secondary);
+    }
+
+    /* Process Button */
+    .btn-exec {
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      border-radius: 12px;
+      padding: 0.9rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-exec:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+    .btn-exec:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Terminal Inspector Window */
+    .inspector-output {
+      background: var(--code-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--code-text);
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    /* Status Bar */
+    .status-panel {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #F59E0B;
+    }
+    .status-dot.ready { background: var(--indicator-active); }
+    .status-dot.busy { background: #3B82F6; animation: blink 1s infinite; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      max-width: 1080px;
+      margin-top: 3.5rem;
+      padding: 2rem 1.5rem 1rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.84rem;
+      color: var(--text-tertiary);
+    }
+    .footer-copy {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 500;
+    }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-link svg { width: 14px; height: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header>
+      <div class="brand" onclick="navigateTo('landing')">
+        <div class="brand-icon">V</div>
+        <span>Vortex Studio</span>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-secondary" id="btn-workspace-toggle" onclick="navigateTo('studio')">
+          Launch Studio ⚡
+        </button>
+        <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
+          <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: LANDING PAGE -->
+    <main id="landing-view">
+      <div class="hero-badge">
+        <span></span>
+        100% Client-Side WebAssembly • Zero Data Uploaded
+      </div>
+      
+      <h1 class="hero-title">Manipulate Video & Audio with Pure Local Power.</h1>
+      
+      <p class="hero-desc">
+        Mux desynced tracks, losslessly slice 10-hour courses, crunch files under WhatsApp limits, and snap pristine 4K frames. Powered by FFmpeg running entirely inside your browser's private memory.
+      </p>
+
+      <div class="hero-cta-group">
+        <button class="btn-hero" onclick="openTool('tool-mux')">
+          Mux Audio & Video Now ⚡
+        </button>
+        <button class="btn-secondary" onclick="openTool('tool-inspect')">
+          Inspect Streams (ffprobe)
+        </button>
+      </div>
+
+      <!-- Bento Features Selection -->
+      <div class="bento-grid">
+        <div class="bento-card" onclick="openTool('tool-mux')">
+          <span class="bento-icon">🎛️</span>
+          <h3 class="bento-title">Audio / Video Muxer</h3>
+          <p class="bento-sub">Fuses standalone YouTube/VOD video streams with external audio tracks instantly without re-encoding.</p>
+        </div>
+
+        <div class="bento-card" onclick="openTool('tool-inspect')">
+          <span class="bento-icon">🔍</span>
+          <h3 class="bento-title">FFprobe Inspector</h3>
+          <p class="bento-sub">Examine container specs, video codecs (AV1, H.264, VP9), audio sample rates, and bitrates without installing MediaInfo.</p>
+        </div>
+
+        <div class="bento-card" onclick="openTool('tool-trim')">
+          <span class="bento-icon">✂️</span>
+          <h3 class="bento-title">Lossless Stream Trimmer</h3>
+          <p class="bento-sub">Slice exact segments from massive 10GB lectures instantly. Zero quality loss, zero waiting time.</p>
+        </div>
+
+        <div class="bento-card" onclick="openTool('tool-extract')">
+          <span class="bento-icon">🎙️</span>
+          <h3 class="bento-title">Voice / Audio Stripper</h3>
+          <p class="bento-sub">Rip audio out of video files as MP3 or M4A for offline podcast listening and AI Whisper transcription.</p>
+        </div>
+
+        <div class="bento-card" onclick="openTool('tool-reframe')">
+          <span class="bento-icon">📱</span>
+          <h3 class="bento-title">Shorts & Reels 9:16 Re-framer</h3>
+          <p class="bento-sub">Center crop or add blurred background pillars to widescreen 16:9 videos for vertical social platforms.</p>
+        </div>
+
+        <div class="bento-card" onclick="openTool('tool-volume')">
+          <span class="bento-icon">🔊</span>
+          <h3 class="bento-title">Audio Normalizer & Booster</h3>
+          <p class="bento-sub">Amplify quiet Zoom and Google Meet recordings up to 300% without re-encoding the video stream.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- VIEW 2: MULTI-TOOL STUDIO WORKSPACE -->
+    <main id="studio-view">
+      <div class="studio-header">
+        <div>
+          <h2 style="font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">Media Studio Workspace</h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Select an engine utility to process files in your local sandbox.</p>
+        </div>
+        <button class="btn-secondary" onclick="navigateTo('landing')">← Back to Overview</button>
+      </div>
+
+      <!-- Navigation Tabs for All 10 Utilities -->
+      <nav class="tools-nav">
+        <button class="tool-tab active" onclick="switchTool('tool-mux')">🎵 Mux Tracks</button>
+        <button class="tool-tab" onclick="switchTool('tool-inspect')">🔍 ffprobe Inspector</button>
+        <button class="tool-tab" onclick="switchTool('tool-trim')">✂️ Lossless Trim</button>
+        <button class="tool-tab" onclick="switchTool('tool-extract')">🎙️ Extract Audio</button>
+        <button class="tool-tab" onclick="switchTool('tool-mute')">🔇 Strip Audio (Mute)</button>
+        <button class="tool-tab" onclick="switchTool('tool-volume')">🔊 Boost Volume</button>
+        <button class="tool-tab" onclick="switchTool('tool-reframe')">📱 9:16 Vertical Reframe</button>
+        <button class="tool-tab" onclick="switchTool('tool-shrink')">📦 Target Compressor</button>
+        <button class="tool-tab" onclick="switchTool('tool-sync')">⏱️ Fix Audio Lag</button>
+        <button class="tool-tab" onclick="switchTool('tool-gif')">🖼️ Palette GIF</button>
+        <button class="tool-tab" onclick="switchTool('tool-snap')">📸 Frame Grabber</button>
+      </nav>
+
+      <!-- Central Studio Card -->
+      <div class="studio-card">
+
+        <!-- 1. MUXER -->
+        <div id="tool-mux" class="panel active">
+          <div class="panel-meta">
+            <h2>Audio & Video Muxer</h2>
+            <p>Fuses standalone high-res video (e.g. YouTube 1080p/4K AV1) and audio streams into one unified MP4.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('mux-v-in').click()">
+            <span class="drop-title">Drop Video Stream (.mp4, .webm)</span>
+            <span class="drop-hint">Contains visual track only</span>
+            <input type="file" id="mux-v-in" accept="video/*">
+            <div id="mux-v-tag" class="file-badge"></div>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('mux-a-in').click()">
+            <span class="drop-title">Drop Audio Track (.mp3, .m4a, .aac)</span>
+            <span class="drop-hint">Contains audio track</span>
+            <input type="file" id="mux-a-in" accept="audio/*">
+            <div id="mux-a-tag" class="file-badge"></div>
+          </div>
+          <button class="btn-exec" id="btn-run-mux" disabled>Execute Stream Merge</button>
+        </div>
+
+        <!-- 2. FFPROBE INSPECTOR -->
+        <div id="tool-inspect" class="panel">
+          <div class="panel-meta">
+            <h2>Stream Inspector (ffprobe Engine)</h2>
+            <p>Analyze codecs, pixel formats, and bitrates without uploading files anywhere.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('inspect-in').click()">
+            <span class="drop-title">Select Any Media File</span>
+            <span class="drop-hint">Video or Audio file</span>
+            <input type="file" id="inspect-in">
+            <div id="inspect-tag" class="file-badge"></div>
+          </div>
+          <button class="btn-exec" id="btn-run-inspect" disabled>Probe Stream Metadata</button>
+          <div id="inspect-out" class="inspector-output"></div>
+        </div>
+
+        <!-- 3. TRIMMER -->
+        <div id="tool-trim" class="panel">
+          <div class="panel-meta">
+            <h2>Lossless Stream Trimmer</h2>
+            <p>Slices footage instantly via stream copy without re-encoding frames.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('trim-in').click()">
+            <span class="drop-title">Select Source Video</span>
+            <input type="file" id="trim-in" accept="video/*">
+            <div id="trim-tag" class="file-badge"></div>
+          </div>
+          <div class="controls-grid">
+            <div class="field-group">
+              <label>Start Timestamp (hh:mm:ss)</label>
+              <input type="text" id="trim-start" value="00:00:00">
+            </div>
+            <div class="field-group">
+              <label>End Timestamp (hh:mm:ss)</label>
+              <input type="text" id="trim-end" value="00:01:00">
+            </div>
+          </div>
+          <button class="btn-exec" id="btn-run-trim" disabled>Cut Video Instantly</button>
+        </div>
+
+        <!-- 4. EXTRACT AUDIO -->
+        <div id="tool-extract" class="panel">
+          <div class="panel-meta">
+            <h2>Audio Track Extractor</h2>
+            <p>Rips sound tracks out of videos for offline listening or transcription.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('extract-in').click()">
+            <span class="drop-title">Select Video File</span>
+            <input type="file" id="extract-in" accept="video/*">
+            <div id="extract-tag" class="file-badge"></div>
+          </div>
+          <div class="field-group">
+            <label>Output Audio Format</label>
+            <select id="extract-format">
+              <option value="mp3">MP3 (High Quality 192k)</option>
+              <option value="m4a">M4A (Lossless Copy - Instant)</option>
+            </select>
+          </div>
+          <button class="btn-exec" id="btn-run-extract" disabled>Extract Audio Stream</button>
+        </div>
+
+        <!-- 5. STRIP AUDIO (MUTE) -->
+        <div id="tool-mute" class="panel">
+          <div class="panel-meta">
+            <h2>Audio Stripper (Instant Mute)</h2>
+            <p>Removes all background noise, dialogue, and microphone audio entirely.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('mute-in').click()">
+            <span class="drop-title">Select Video File</span>
+            <input type="file" id="mute-in" accept="video/*">
+            <div id="mute-tag" class="file-badge"></div>
+          </div>
+          <button class="btn-exec" id="btn-run-mute" disabled>Mute Video (Lossless)</button>
+        </div>
+
+        <!-- 6. VOLUME BOOSTER -->
+        <div id="tool-volume" class="panel">
+          <div class="panel-meta">
+            <h2>Audio Booster & Loudness Normalizer</h2>
+            <p>Amplifies quiet microphones in screen recordings and Zoom meetings.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('vol-in').click()">
+            <span class="drop-title">Select Video File</span>
+            <input type="file" id="vol-in" accept="video/*">
+            <div id="vol-tag" class="file-badge"></div>
+          </div>
+          <div class="controls-grid">
+            <div class="field-group">
+              <label>Gain Multiplier</label>
+              <select id="vol-mult">
+                <option value="1.5">+150% Volume Boost</option>
+                <option value="2.0">+200% Volume Boost</option>
+                <option value="3.0">+300% Maximum Boost</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-exec" id="btn-run-vol" disabled>Boost Audio Levels</button>
+        </div>
+
+        <!-- 7. REFRAME 9:16 -->
+        <div id="tool-reframe" class="panel">
+          <div class="panel-meta">
+            <h2>9:16 Vertical Video Re-framer</h2>
+            <p>Formats 16:9 landscape clips for Instagram Reels, Shorts, and TikTok.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('reframe-in').click()">
+            <span class="drop-title">Select 16:9 Widescreen Video</span>
+            <input type="file" id="reframe-in" accept="video/*">
+            <div id="reframe-tag" class="file-badge"></div>
+          </div>
+          <button class="btn-exec" id="btn-run-reframe" disabled>Reframe to 9:16 Vertical</button>
+        </div>
+
+        <!-- 8. TARGET SHRINKER -->
+        <div id="tool-shrink" class="panel">
+          <div class="panel-meta">
+            <h2>Target File Size Compressor</h2>
+            <p>Calculates dynamic bitrates to compress videos below platform limits.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('shrink-in').click()">
+            <span class="drop-title">Select Video File</span>
+            <input type="file" id="shrink-in" accept="video/*">
+            <div id="shrink-tag" class="file-badge"></div>
+          </div>
+          <div class="field-group">
+            <label>Target Container Size</label>
+            <select id="shrink-target">
+              <option value="24">25 MB (Discord Standard)</option>
+              <option value="15">16 MB (WhatsApp Max Attachment)</option>
+              <option value="48">50 MB (Email Uploads)</option>
+            </select>
+          </div>
+          <button class="btn-exec" id="btn-run-shrink" disabled>Compress to Target Size</button>
+        </div>
+
+        <!-- 9. FIX AUDIO DESYNC -->
+        <div id="tool-sync" class="panel">
+          <div class="panel-meta">
+            <h2>Audio Desync Realignment</h2>
+            <p>Shifts audio forward or backward without quality loss.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('sync-in').click()">
+            <span class="drop-title">Select Desynced Video</span>
+            <input type="file" id="sync-in" accept="video/*">
+            <div id="sync-tag" class="file-badge"></div>
+          </div>
+          <div class="field-group">
+            <label>Audio Offset (Seconds)</label>
+            <input type="number" id="sync-offset" step="0.1" value="1.0">
+          </div>
+          <button class="btn-exec" id="btn-run-sync" disabled>Realign Tracks</button>
+        </div>
+
+        <!-- 10. PALETTE GIF -->
+        <div id="tool-gif" class="panel">
+          <div class="panel-meta">
+            <h2>2-Pass Cinema Palette GIF</h2>
+            <p>Generates crisp, color-band-free animated GIFs.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('gif-in').click()">
+            <span class="drop-title">Select Short Video Clip</span>
+            <input type="file" id="gif-in" accept="video/*">
+            <div id="gif-tag" class="file-badge"></div>
+          </div>
+          <div class="controls-grid">
+            <div class="field-group">
+              <label>Start Timestamp</label>
+              <input type="text" id="gif-start" value="00:00:00">
+            </div>
+            <div class="field-group">
+              <label>Duration (Seconds)</label>
+              <input type="number" id="gif-dur" value="3" min="1" max="15">
+            </div>
+          </div>
+          <button class="btn-exec" id="btn-run-gif" disabled>Render High-Res GIF</button>
+        </div>
+
+        <!-- 11. FRAME GRABBER -->
+        <div id="tool-snap" class="panel">
+          <div class="panel-meta">
+            <h2>High-Res Frame Grabber</h2>
+            <p>Captures full-resolution PNG posters at specific timestamps.</p>
+          </div>
+          <div class="dropzone" onclick="document.getElementById('snap-in').click()">
+            <span class="drop-title">Select Video File</span>
+            <input type="file" id="snap-in" accept="video/*">
+            <div id="snap-tag" class="file-badge"></div>
+          </div>
+          <div class="field-group">
+            <label>Capture Timestamp (hh:mm:ss)</label>
+            <input type="text" id="snap-time" value="00:00:05">
+          </div>
+          <button class="btn-exec" id="btn-run-snap" disabled>Snap Poster Image</button>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="status-panel">
+          <div class="status-left">
+            <div class="status-dot" id="engine-dot"></div>
+            <span id="engine-msg">Initializing WebAssembly Core...</span>
+          </div>
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;">100% In-Browser</span>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer>
+      <div class="footer-copy">
+        &copy; 2026 Osazuwa Matthew. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a class="footer-link" href="mailto:osazuwamatthewogbebor@gmail.com">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          osazuwamatthewogbebor@gmail.com
+        </a>
+        <a class="footer-link" href="https://wa.me/2348264776022" target="_blank" rel="noopener noreferrer">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          +234 826 477 6022
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Dynamic Logic & WebAssembly Execution Engine -->
+  <script type="module">
+    import { FFmpeg } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
+    import { fetchFile } from 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js';
+
+    const ffmpeg = new FFmpeg();
+    const engineDot = document.getElementById('engine-dot');
+    const engineMsg = document.getElementById('engine-msg');
+    let isReady = false;
+
+    // View Navigation Logic
+    window.navigateTo = function(targetView) {
+      if (targetView === 'landing') {
+        document.getElementById('landing-view').style.display = 'flex';
+        document.getElementById('studio-view').style.display = 'none';
+        document.getElementById('btn-workspace-toggle').innerText = 'Launch Studio ⚡';
+      } else {
+        document.getElementById('landing-view').style.display = 'none';
+        document.getElementById('studio-view').style.display = 'flex';
+        document.getElementById('btn-workspace-toggle').innerText = 'Overview 🏠';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.openTool = function(toolId) {
+      navigateTo('studio');
+      switchTool(toolId);
+    };
+
+    window.switchTool = function(toolId) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
+      
+      const panel = document.getElementById(toolId);
+      if (panel) panel.classList.add('active');
+
+      const tabs = Array.from(document.querySelectorAll('.tool-tab'));
+      const activeTab = tabs.find(t => t.getAttribute('onclick')?.includes(toolId));
+      if (activeTab) activeTab.classList.add('active');
+    };
+
+    // Theming Setup
+    const themeBtn = document.getElementById('theme-btn');
+    const htmlEl = document.documentElement;
+    function toggleTheme() {
+      const current = htmlEl.getAttribute('data-theme');
+      const target = current === 'dark' ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', target);
+      localStorage.setItem('theme', target);
+    }
+    htmlEl.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+    themeBtn.addEventListener('click', toggleTheme);
+
+    // Initialize FFmpeg Core (Single or Multi-Threaded depending on headers)
+    async function initCore() {
+      try {
+        ffmpeg.on('log', ({ message }) => {
+          console.log('[Vortex Core]', message);
+          if (document.getElementById('inspect-out').style.display === 'block') {
+            document.getElementById('inspect-out').innerText += message + '\n';
+          }
+        });
+
+        // Autodetect whether COOP/COEP headers are present
+        if (window.crossOriginIsolated) {
+          await ffmpeg.load(); // Multi-threaded full performance
+          engineMsg.innerText = 'Multi-Thread Engine Ready (High Performance)';
+        } else {
+          // Fallback to single-thread ESM build
+          const base = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
+          await ffmpeg.load({
+            coreURL: `${base}/ffmpeg-core.js`,
+            wasmURL: `${base}/ffmpeg-core.wasm`
+          });
+          engineMsg.innerText = 'Engine Active & Ready (Single-Thread Fallback)';
+        }
+
+        engineDot.className = 'status-dot ready';
+        isReady = true;
+      } catch (err) {
+        engineDot.className = 'status-dot';
+        engineMsg.innerText = 'Engine Initialization Error';
+        console.error(err);
+      }
+    }
+    initCore();
+
+    // Universal Dropzone Connector
+    function bindDropzone(inputId, tagId, buttonId, secondaryId = null) {
+      const el = document.getElementById(inputId);
+      const tag = document.getElementById(tagId);
+      const btn = document.getElementById(buttonId);
+
+      el.addEventListener('change', () => {
+        if (el.files.length > 0) {
+          tag.style.display = 'inline-block';
+          tag.innerText = el.files[0].name;
+          if (isReady && (!secondaryId || document.getElementById(secondaryId).files.length > 0)) {
+            btn.disabled = false;
+          }
+        }
+      });
+    }
+
+    bindDropzone('mux-v-in', 'mux-v-tag', 'btn-run-mux', 'mux-a-in');
+    bindDropzone('mux-a-in', 'mux-a-tag', 'btn-run-mux', 'mux-v-in');
+    bindDropzone('inspect-in', 'inspect-tag', 'btn-run-inspect');
+    bindDropzone('trim-in', 'trim-tag', 'btn-run-trim');
+    bindDropzone('extract-in', 'extract-tag', 'btn-run-extract');
+    bindDropzone('mute-in', 'mute-tag', 'btn-run-mute');
+    bindDropzone('vol-in', 'vol-tag', 'btn-run-vol');
+    bindDropzone('reframe-in', 'reframe-tag', 'btn-run-reframe');
+    bindDropzone('shrink-in', 'shrink-tag', 'btn-run-shrink');
+    bindDropzone('sync-in', 'sync-tag', 'btn-run-sync');
+    bindDropzone('gif-in', 'gif-tag', 'btn-run-gif');
+    bindDropzone('snap-in', 'snap-tag', 'btn-run-snap');
+
+    // Universal Buffer Downloader
+    async function triggerClientDownload(wasmFile, outputName, mime) {
+      const data = await ffmpeg.readFile(wasmFile);
+      const blob = new Blob([data.buffer], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = outputName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function setBusy(msg) {
+      engineDot.className = 'status-dot busy';
+      engineMsg.innerText = msg;
+    }
+
+    function setDone(msg) {
+      engineDot.className = 'status-dot ready';
+      engineMsg.innerText = msg || 'Execution Complete!';
+    }
+
+    // 1. MUX
+    document.getElementById('btn-run-mux').addEventListener('click', async () => {
+      setBusy('Muxing audio & video streams...');
+      const v = document.getElementById('mux-v-in').files[0];
+      const a = document.getElementById('mux-a-in').files[0];
+      await ffmpeg.writeFile('mv.mp4', await fetchFile(v));
+      await ffmpeg.writeFile('ma.dat', await fetchFile(a));
+      await ffmpeg.exec(['-i', 'mv.mp4', '-i', 'ma.dat', '-c:v', 'copy', '-c:a', 'aac', 'mux_out.mp4']);
+      await triggerClientDownload('mux_out.mp4', `muxed_${v.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 2. INSPECT (ffprobe emulation via ffmpeg inspect)
+    document.getElementById('btn-run-inspect').addEventListener('click', async () => {
+      const outBox = document.getElementById('inspect-out');
+      outBox.style.display = 'block';
+      outBox.innerText = 'Inspecting bitstream packets...\n';
+      const f = document.getElementById('inspect-in').files[0];
+      await ffmpeg.writeFile('probe.dat', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'probe.dat']);
+      setDone('Inspection finished. Check terminal output above.');
+    });
+
+    // 3. TRIM
+    document.getElementById('btn-run-trim').addEventListener('click', async () => {
+      setBusy('Cutting segment via stream copy...');
+      const f = document.getElementById('trim-in').files[0];
+      const s = document.getElementById('trim-start').value;
+      const e = document.getElementById('trim-end').value;
+      await ffmpeg.writeFile('tr.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-ss', s, '-to', e, '-i', 'tr.mp4', '-c', 'copy', 'trim_out.mp4']);
+      await triggerClientDownload('trim_out.mp4', `cut_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 4. EXTRACT AUDIO
+    document.getElementById('btn-run-extract').addEventListener('click', async () => {
+      setBusy('Extracting audio stream...');
+      const f = document.getElementById('extract-in').files[0];
+      const fmt = document.getElementById('extract-format').value;
+      await ffmpeg.writeFile('ex.mp4', await fetchFile(f));
+      if (fmt === 'mp3') {
+        await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'libmp3lame', '-q:a', '2', 'sound.mp3']);
+        await triggerClientDownload('sound.mp3', `${f.name}.mp3`, 'audio/mp3');
+      } else {
+        await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'copy', 'sound.m4a']);
+        await triggerClientDownload('sound.m4a', `${f.name}.m4a`, 'audio/mp4');
+      }
+      setDone();
+    });
+
+    // 5. MUTE
+    document.getElementById('btn-run-mute').addEventListener('click', async () => {
+      setBusy('Stripping audio stream...');
+      const f = document.getElementById('mute-in').files[0];
+      await ffmpeg.writeFile('mu.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'mu.mp4', '-an', '-c:v', 'copy', 'muted.mp4']);
+      await triggerClientDownload('muted.mp4', `muted_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 6. VOLUME BOOST
+    document.getElementById('btn-run-vol').addEventListener('click', async () => {
+      setBusy('Amplifying audio levels...');
+      const f = document.getElementById('vol-in').files[0];
+      const mult = document.getElementById('vol-mult').value;
+      await ffmpeg.writeFile('vo.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'vo.mp4', '-c:v', 'copy', '-af', `volume=${mult}`, 'boosted.mp4']);
+      await triggerClientDownload('boosted.mp4', `boosted_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 7. REFRAME 9:16
+    document.getElementById('btn-run-reframe').addEventListener('click', async () => {
+      setBusy('Rendering 9:16 vertical crop (calculating frames)...');
+      const f = document.getElementById('reframe-in').files[0];
+      await ffmpeg.writeFile('rf.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'rf.mp4', '-vf', 'crop=ih*(9/16):ih', '-c:a', 'copy', 'vertical.mp4']);
+      await triggerClientDownload('vertical.mp4', `shorts_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 8. TARGET SHRINK
+    document.getElementById('btn-run-shrink').addEventListener('click', async () => {
+      setBusy('Calculating optimal bitrate & compressing...');
+      const f = document.getElementById('shrink-in').files[0];
+      const mb = parseInt(document.getElementById('shrink-target').value);
+      const targetBitrate = Math.max(250, Math.floor((mb * 8192) / 120) - 128);
+      await ffmpeg.writeFile('sh.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'sh.mp4', '-b:v', `${targetBitrate}k`, '-c:v', 'libx264', '-c:a', 'aac', '-b:a', '128k', 'shrunk.mp4']);
+      await triggerClientDownload('shrunk.mp4', `compressed_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 9. FIX DESYNC
+    document.getElementById('btn-run-sync').addEventListener('click', async () => {
+      setBusy('Realigning track offsets...');
+      const f = document.getElementById('sync-in').files[0];
+      const offset = document.getElementById('sync-offset').value;
+      await ffmpeg.writeFile('sy.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-i', 'sy.mp4', '-itsoffset', offset, '-i', 'sy.mp4', '-map', '0:v', '-map', '1:a', '-c', 'copy', 'synced.mp4']);
+      await triggerClientDownload('synced.mp4', `synced_${f.name}`, 'video/mp4');
+      setDone();
+    });
+
+    // 10. PALETTE GIF
+    document.getElementById('btn-run-gif').addEventListener('click', async () => {
+      setBusy('Pass 1: Analyzing custom color distribution...');
+      const f = document.getElementById('gif-in').files[0];
+      const s = document.getElementById('gif-start').value;
+      const d = document.getElementById('gif-dur').value;
+      await ffmpeg.writeFile('g.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-vf', 'fps=12,scale=480:-1:flags=lanczos,palettegen', 'pal.png']);
+      setBusy('Pass 2: Mapping pixel matrix...');
+      await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-i', 'pal.png', '-filter_complex', 'fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse', 'out.gif']);
+      await triggerClientDownload('out.gif', `loop_${Date.now()}.gif`, 'image/gif');
+      setDone();
+    });
+
+    // 11. FRAME GRABBER
+    document.getElementById('btn-run-snap').addEventListener('click', async () => {
+      setBusy('Capturing poster frame...');
+      const f = document.getElementById('snap-in').files[0];
+      const t = document.getElementById('snap-time').value;
+      await ffmpeg.writeFile('sn.mp4', await fetchFile(f));
+      await ffmpeg.exec(['-ss', t, '-i', 'sn.mp4', '-vframes', '1', '-q:v', '2', 'snap.png']);
+      await triggerClientDownload('snap.png', `poster_${Date.now()}.png`, 'image/png');
+      setDone();
+    });
+  </script>
+</body>
+</html>
