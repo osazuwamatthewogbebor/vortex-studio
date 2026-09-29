@@ -3,1002 +3,2730 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vortex Studio — The Zero-Cloud Media Engine</title>
-  
+  <title>Vortex Studio — Edit video &amp; audio without the upload</title>
+  <meta name="description" content="Eleven FFmpeg engines compiled to WebAssembly, running in your browser's own memory. Mux, trim, compress, reframe and inspect media with nothing ever uploaded.">
+  <meta name="theme-color" content="#0A0A0B">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    /* CSS Variables & Theming Tokens */
-    :root[data-theme="light"] {
-      --bg-page: #F8F9FA;
-      --bg-card: #FFFFFF;
-      --bg-subtle: #F1F3F5;
-      --bg-dropzone: #FAFBFC;
-      --border-subtle: #E9ECEF;
-      --border-strong: #DEE2E6;
-      --text-primary: #0F172A;
-      --text-secondary: #475569;
-      --text-tertiary: #94A3B8;
-      --accent: #0F172A;
-      --accent-hover: #1E293B;
-      --accent-text: #FFFFFF;
-      --badge-bg: #ECFDF5;
-      --badge-text: #059669;
-      --badge-border: #A7F3D0;
-      --indicator-active: #10B981;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
-      --code-bg: #1E293B;
-      --code-text: #E2E8F0;
-    }
-
+    /* ============================================================
+       1. TOKENS
+       Dark  : near-black field, warm off-white type, one acid accent.
+       Light : Audacity's cream field, same accent as a fill.
+       ============================================================ */
     :root[data-theme="dark"] {
-      --bg-page: #0A0B0D;
-      --bg-card: #121316;
-      --bg-subtle: #181A1F;
-      --bg-dropzone: #0E0F12;
-      --border-subtle: #22252A;
-      --border-strong: #2E323A;
-      --text-primary: #F8FAFC;
-      --text-secondary: #94A3B8;
-      --text-tertiary: #64748B;
-      --accent: #F8FAFC;
-      --accent-hover: #E2E8F0;
-      --accent-text: #0A0B0D;
-      --badge-bg: rgba(16, 185, 129, 0.12);
-      --badge-text: #34D399;
-      --badge-border: rgba(52, 211, 153, 0.2);
-      --indicator-active: #34D399;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-      --shadow-md: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
-      --code-bg: #08090A;
-      --code-text: #CBD5E1;
+      --bg:        #0A0A0B;
+      --bg-panel:  #101012;
+      --bg-sunk:   #08080A;
+      --bg-raise:  #17171A;
+
+      --line:      rgba(255, 255, 255, 0.10);
+      --line-soft: rgba(255, 255, 255, 0.06);
+      --line-hard: rgba(255, 255, 255, 0.20);
+
+      --ink:       #F3F2EE;
+      --ink-2:     #8B8B90;
+      --ink-3:     #55555B;
+
+      --accent:    #D7FB4E;
+      --accent-ink:#0A0A0B;
+      --accent-dim:rgba(215, 251, 78, 0.14);
+      --accent-line:rgba(215, 251, 78, 0.34);
+
+      --ok:        #7BE495;
+
+      --btn-bg:    #D7FB4E;
+      --btn-ink:   #0A0A0B;
+      --btn-hover: #E4FF77;
+
+      --wave:      #4A4A52;
+      --wave-peak: #6E6E78;
+
+      --code-bg:   #08080A;
+      --code-ink:  #C7C7CE;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    :root[data-theme="light"] {
+      --bg:        #F2F0EA;
+      --bg-panel:  #FBFAF7;
+      --bg-sunk:   #EAE7DF;
+      --bg-raise:  #FFFFFF;
+
+      --line:      rgba(10, 10, 11, 0.14);
+      --line-soft: rgba(10, 10, 11, 0.08);
+      --line-hard: rgba(10, 10, 11, 0.30);
+
+      --ink:       #0C0C0D;
+      --ink-2:     #5B5B60;
+      --ink-3:     #8C8C91;
+
+      --accent:    #C9EC3C;
+      --accent-ink:#0C0C0D;
+      --accent-dim:rgba(150, 190, 20, 0.22);
+      --accent-line:rgba(120, 155, 10, 0.55);
+
+      --ok:        #1C7A45;
+
+      --btn-bg:    #0C0C0D;
+      --btn-ink:   #F2F0EA;
+      --btn-hover: #2A2A2E;
+
+      --wave:      #B4B0A6;
+      --wave-peak: #8A857A;
+
+      --code-bg:   #0C0C0D;
+      --code-ink:  #D6D3CB;
     }
+
+    /* ============================================================
+       2. RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
     body {
-      background-color: var(--bg-page);
-      color: var(--text-primary);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden;
+      overflow-x: clip;
+      transition: background-color .3s ease, color .3s ease;
     }
 
-    /* Layout Wrapper */
-    .app-wrapper {
+    img, svg { display: block; max-width: 100%; }
+    button, input, select { font: inherit; color: inherit; }
+    a { color: inherit; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    ::-webkit-scrollbar { width: 11px; height: 11px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--line-hard); border: 4px solid var(--bg); border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+    /* ============================================================
+       3. LAYOUT
+       ============================================================ */
+    .shell {
       width: 100%;
-      max-width: 1080px;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
+      max-width: 1360px;
+      margin-inline: auto;
+      padding-inline: clamp(1.25rem, 4vw, 3.25rem);
     }
 
-    /* Top Global Header */
-    header {
-      display: flex;
-      justify-content: space-between;
+    .section {
+      width: 100%;
+      padding-block: clamp(4rem, 8vw, 7rem);
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 80px;
+    }
+    .section--flush { border-top: none; }
+
+    /* Mono micro-label — the Audacity "spec sheet" voice */
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2rem 4rem;
+      align-items: end;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    }
+    .section-head .mono { display: block; margin-bottom: 1.25rem; }
+
+    .section-title {
+      font-size: clamp(1.75rem, 3.4vw, 2.9rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      text-wrap: balance;
+    }
+    .section-title em {
+      font-style: normal;
+      color: var(--ink-3);
+    }
+    .section-note {
+      font-size: .95rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 46ch;
+    }
+
+    /* ============================================================
+       4. BUTTONS — flat, small radius, one loud fill
+       ============================================================ */
+    .btn {
+      display: inline-flex;
       align-items: center;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 2rem;
+      justify-content: center;
+      gap: .55rem;
+      padding: .8rem 1.3rem;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: var(--btn-bg);
+      color: var(--btn-ink);
+      font-size: .875rem;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+    }
+    .btn:hover { background: var(--btn-hover); }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line-hard);
+    }
+    .btn--ghost:hover { background: var(--bg-raise); border-color: var(--ink-3); }
+
+    /* Underlined text link — Audacity's "View release notes" */
+    .link {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      padding-bottom: 2px;
+      border-bottom: 1px solid var(--line-hard);
+      transition: border-color .18s ease, color .18s ease;
+    }
+    .link:hover { border-color: var(--accent); color: var(--accent); }
+    .link svg { width: 14px; height: 14px; }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: color .18s ease, border-color .18s ease;
+    }
+    .icon-btn:hover { color: var(--ink); border-color: var(--line-hard); }
+
+    /* ============================================================
+       5. HEADER
+       ============================================================ */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      width: 100%;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* Scroll progress — a single 2px accent rule under the header */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent);
+      z-index: 1000;
+      transition: width .1s linear;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 64px;
     }
 
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 800;
-      font-size: 1.25rem;
-      letter-spacing: -0.03em;
-      cursor: pointer;
-    }
-
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: var(--text-primary);
-      color: var(--bg-page);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      font-weight: 900;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .btn-secondary {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      padding: 0.5rem 0.9rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--border-strong);
-      background: var(--bg-subtle);
-    }
-
-    .theme-toggle {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      gap: .6rem;
+      background: none;
+      border: none;
       cursor: pointer;
+      font-size: .98rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+    .brand sup {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .5rem;
+      font-weight: 500;
+      color: var(--ink-3);
+      top: -.7em;
+      position: relative;
+      letter-spacing: 0;
+    }
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      border-radius: 3px;
+      color: var(--accent-ink);
+      flex-shrink: 0;
+    }
+    .brand-mark svg { width: 14px; height: 14px; }
+
+    .nav {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
+      gap: 1.6rem;
+      margin-left: 1rem;
     }
-    .theme-toggle:hover {
-      color: var(--text-primary);
-      border-color: var(--border-strong);
+    .nav a {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--ink-2);
+      text-decoration: none;
+      transition: color .18s ease;
+    }
+    .nav a:hover { color: var(--ink); }
+
+    .header-meta {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .06em;
+      color: var(--ink-3);
+      white-space: nowrap;
+    }
+    .header-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+
+    /* ============================================================
+       6. HERO
+       ============================================================ */
+    .hero { width: 100%; padding-top: clamp(3rem, 6vw, 5.5rem); }
+
+    .hero-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 3rem 5rem;
+      align-items: start;
+      padding-bottom: clamp(3rem, 6vw, 5rem);
     }
 
-    /* Landing Section */
-    #landing-view {
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 2rem;
+    }
+    .hero-eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Two-tone headline, Musikalis-style: same weight, second line dimmed.
+       Sized so each half holds one line at every width — the two-tone read
+       collapses the moment either one wraps. */
+    .hero-title {
+      font-size: clamp(2rem, 4.6vw, 4.3rem);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -0.045em;
+      margin-bottom: 1.75rem;
+    }
+    .hero-title span { display: block; }
+    .hero-title span:last-child { color: var(--ink-3); }
+
+    .hero-desc {
+      font-size: clamp(1rem, 1.3vw, 1.12rem);
+      color: var(--ink-2);
+      line-height: 1.6;
+      max-width: 50ch;
+      margin-bottom: 2.25rem;
+    }
+    .hero-desc b { color: var(--ink); font-weight: 600; }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Technical readout column — the "spec sheet" */
+    .spec {
+      border-top: 1px solid var(--line);
+      padding-top: 1.25rem;
+    }
+    .spec-row {
+      display: grid;
+      grid-template-columns: 8.5rem minmax(0, 1fr);
+      gap: 1rem;
+      padding: .8rem 0;
+      border-bottom: 1px solid var(--line-soft);
+      align-items: baseline;
+    }
+    .spec-row dt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .spec-row dd {
+      font-size: .84rem;
+      color: var(--ink);
+      font-weight: 500;
+      line-height: 1.45;
+    }
+    .spec-row dd small {
+      display: block;
+      font-size: .76rem;
+      color: var(--ink-3);
+      font-weight: 400;
+      margin-top: .15rem;
+    }
+
+    /* ============================================================
+       7. THE DECK — waveform instrument
+       ============================================================ */
+    .deck { width: 100%; padding-bottom: clamp(3rem, 6vw, 5rem); }
+
+    .deck-frame {
+      border: 1px solid var(--line);
+      background: var(--bg-panel);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .deck-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .7rem 1rem;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .deck-bar .mono { color: var(--ink-2); }
+    .deck-bar .spacer { margin-left: auto; }
+
+    .deck-lamp {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      color: var(--ink-2);
+    }
+    .deck-lamp::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* Time ruler */
+    .ruler {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: .7rem 1rem .4rem;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .ruler span {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      padding: 3rem 0 2rem;
+      gap: .3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .04em;
+      color: var(--ink-3);
+      position: relative;
+      flex: 1;
     }
+    .ruler span::before {
+      content: '';
+      width: 1px;
+      height: 5px;
+      background: var(--line-hard);
+      order: 2;
+    }
+    .ruler span:first-child { align-items: flex-start; }
+    .ruler span:last-child { align-items: flex-end; }
+    .ruler span.major { color: var(--ink-2); }
+    .ruler span.major::before { height: 9px; background: var(--ink-3); }
 
-    .hero-badge {
-      display: inline-flex;
+    /* Waveform */
+    .wave {
+      position: relative;
+      height: 168px;
+      padding: 0 1rem;
+      display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: var(--badge-bg);
-      border: 1px solid var(--badge-border);
-      color: var(--badge-text);
-      font-size: 0.8rem;
+      background: var(--bg-sunk);
+    }
+    .wave svg { width: 100%; height: 118px; color: var(--wave); }
+
+    .wave-select {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: var(--accent);
+      opacity: .16;
+      border-left: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+      pointer-events: none;
+    }
+    .wave-select-tag {
+      position: absolute;
+      top: .6rem;
+      left: 0;
+      transform: translateX(-1px);
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
       font-weight: 600;
-      padding: 0.4rem 0.9rem;
-      border-radius: 9999px;
-      margin-bottom: 1.5rem;
+      letter-spacing: .06em;
+      padding: .18rem .4rem;
+      white-space: nowrap;
+      border-radius: 2px;
     }
 
-    .hero-badge span {
+    .wave-head {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--accent);
+      pointer-events: none;
+    }
+    .wave-head::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -3px;
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    .deck-foot {
+      display: flex;
+      align-items: center;
+      gap: 1rem 1.75rem;
+      padding: .75rem 1rem;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .deck-foot .spacer { margin-left: auto; }
+
+    /* ============================================================
+       8. FORMAT STRIP
+       ============================================================ */
+    .formats {
+      width: 100%;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      padding-block: 1.1rem;
+    }
+    .formats-track {
+      display: flex;
+      gap: 0;
+      width: max-content;
+      animation: slide 55s linear infinite;
+    }
+    .formats:hover .formats-track { animation-play-state: paused; }
+    @keyframes slide {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .formats-track span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      padding-inline: 1.5rem;
+      border-right: 1px solid var(--line-soft);
+      white-space: nowrap;
+      transition: color .2s ease;
+    }
+    .formats-track span:hover { color: var(--accent); }
+
+    /* ============================================================
+       9. NUMBERS
+       ============================================================ */
+    .numbers {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .number {
+      padding: 0 clamp(1rem, 2.5vw, 2.25rem);
+      border-left: 1px solid var(--line);
+    }
+    .number:first-child { border-left: none; padding-left: 0; }
+    .number:last-child { padding-right: 0; }
+    .number b {
+      display: block;
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: .9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .number .mono { display: block; margin-bottom: .5rem; color: var(--ink-2); }
+    .number p { font-size: .82rem; color: var(--ink-3); line-height: 1.55; }
+
+    /* ============================================================
+       10. STEPS
+       ============================================================ */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0 clamp(1.5rem, 4vw, 4rem);
+    }
+    .step { border-top: 1px solid var(--line-hard); padding-top: 1.5rem; }
+    .step-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 1.75rem;
+    }
+    .step h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin-bottom: .7rem;
+    }
+    .step p { font-size: .88rem; color: var(--ink-2); line-height: 1.65; }
+
+    /* ============================================================
+       11. ENGINE INDEX — editorial spec list, no cards
+       ============================================================ */
+    .engines {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+    }
+    .engine {
+      display: grid;
+      grid-template-columns: 3.25rem minmax(0, 1fr) 1.5rem;
+      gap: 1rem;
+      align-items: start;
+      padding: 1.5rem 2rem 1.5rem 0;
+      border-bottom: 1px solid var(--line);
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      text-align: left;
+      cursor: pointer;
+      color: inherit;
+      position: relative;
+      transition: background-color .2s ease;
+    }
+    .engine:nth-child(odd) { padding-right: 2rem; border-right: 1px solid var(--line); }
+    .engine:nth-child(even) { padding-left: 2rem; }
+    .engine:hover { background: var(--bg-panel); }
+
+    .engine-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--ink-3);
+      padding-top: .25rem;
+      transition: color .2s ease;
+    }
+    .engine:hover .engine-idx { color: var(--accent); }
+
+    .engine-name {
+      font-size: 1.02rem;
+      font-weight: 600;
+      letter-spacing: -0.022em;
+      margin-bottom: .45rem;
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+    .engine-name code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      color: var(--ink-3);
+      border: 1px solid var(--line);
+      padding: .1rem .35rem;
+      border-radius: 3px;
+      text-transform: none;
+    }
+    .engine-desc {
+      font-size: .855rem;
+      color: var(--ink-2);
+      line-height: 1.6;
+      max-width: 44ch;
+    }
+
+    .engine-go {
+      color: var(--ink-3);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity .2s ease, transform .2s ease, color .2s ease;
+      padding-top: .15rem;
+    }
+    .engine:hover .engine-go { opacity: 1; transform: translateX(0); color: var(--accent); }
+    .engine-go svg { width: 16px; height: 16px; }
+
+    /* ============================================================
+       12. SHOWCASE
+       ============================================================ */
+    .showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .showcase-list {
+      list-style: none;
+      margin-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+    .showcase-list li {
+      display: grid;
+      grid-template-columns: 1.25rem minmax(0, 1fr);
+      gap: .85rem;
+      padding: .95rem 0;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: .875rem;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+    .showcase-list li::before {
+      content: '—';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: .8rem;
+      line-height: 1.6;
+    }
+    .showcase-list b { color: var(--ink); font-weight: 600; }
+
+    .terminal {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--code-bg);
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .65rem .9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+    .terminal-bar .mono { color: #6A6A72; }
+    .terminal-body {
+      padding: 1.15rem 1.25rem 1.35rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .74rem;
+      line-height: 1.85;
+      color: var(--code-ink);
+      overflow-x: auto;
+    }
+    .terminal-body .l { display: block; white-space: pre; }
+    .terminal-body .d { color: #6A6A72; }
+    .terminal-body .a { color: var(--accent); }
+    .terminal-body .w { color: #F5F7FA; }
+    .terminal-body .g { color: #7BE495; }
+
+    /* ============================================================
+       13. COMPARE TABLE
+       ============================================================ */
+    .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table.compare {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+    table.compare th,
+    table.compare td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: middle;
+    }
+    table.compare thead th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-panel);
+      white-space: nowrap;
+    }
+    table.compare thead th.vx { color: var(--ink); }
+    table.compare tbody th {
+      font-weight: 500;
+      font-size: .85rem;
+      color: var(--ink-2);
+      white-space: nowrap;
+    }
+    table.compare tbody tr:last-child th,
+    table.compare tbody tr:last-child td { border-bottom: none; }
+    table.compare tbody tr:hover td,
+    table.compare tbody tr:hover th { background: var(--bg-panel); }
+
+    .vx-col {
+      background: var(--accent-dim);
+      color: var(--ink);
+      font-weight: 600;
+      box-shadow: inset 1px 0 0 var(--accent-line), inset -1px 0 0 var(--accent-line);
+    }
+    table.compare thead th.vx-col { color: var(--ink); }
+
+    .cell { display: inline-flex; align-items: center; gap: .5rem; }
+    .cell::before {
+      content: '';
       width: 6px;
       height: 6px;
-      background: currentColor;
       border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--ink-3);
     }
+    .cell.y::before { background: var(--accent); }
+    .cell.n::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .cell.m::before { background: #D9A21B; }
+    .cell.n { color: var(--ink-3); }
 
-    .hero-title {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.04em;
-      max-width: 800px;
-      margin-bottom: 1.25rem;
+    /* ============================================================
+       14. USE CASES
+       ============================================================ */
+    .usecases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0 clamp(1.5rem, 3vw, 3rem);
     }
+    .usecase { border-top: 1px solid var(--line-hard); padding-top: 1.35rem; }
+    .usecase .mono { display: block; margin-bottom: 1.5rem; }
+    .usecase h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: .6rem;
+    }
+    .usecase p { font-size: .85rem; color: var(--ink-2); line-height: 1.65; }
 
-    .hero-desc {
+    /* ============================================================
+       15. FAQ
+       ============================================================ */
+    .faq { border-top: 1px solid var(--line); }
+    .faq details { border-bottom: 1px solid var(--line); }
+    .faq summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 1.35rem 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 1.5rem;
+      gap: 2rem;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      transition: color .2s ease;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary:hover { color: var(--accent); }
+    .faq summary::after {
+      content: '+';
+      font-family: 'JetBrains Mono', monospace;
       font-size: 1.1rem;
-      color: var(--text-secondary);
-      max-width: 620px;
-      line-height: 1.55;
-      margin-bottom: 2.25rem;
+      font-weight: 400;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1;
+      transition: color .2s ease;
+    }
+    .faq details[open] summary::after { content: '−'; color: var(--accent); }
+    .faq-body {
+      padding: 0 0 1.5rem;
+      max-width: 76ch;
+      font-size: .89rem;
+      color: var(--ink-2);
+      line-height: 1.75;
+    }
+    .faq-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82em;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      padding: .08rem .35rem;
+      border-radius: 3px;
     }
 
-    .hero-cta-group {
+    /* ============================================================
+       16. CTA
+       ============================================================ */
+    .cta {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-radius: 6px;
+      padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 4rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 2.5rem 4rem;
+      align-items: center;
+    }
+    .cta h2 {
+      font-size: clamp(1.9rem, 4.4vw, 3.3rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 1.02;
+      margin-bottom: 1rem;
+      text-wrap: balance;
+    }
+    .cta p {
+      font-size: clamp(.92rem, 1.2vw, 1.02rem);
+      line-height: 1.6;
+      max-width: 44ch;
+      opacity: .72;
+    }
+    .cta-actions {
       display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      align-items: stretch;
+    }
+    .cta .btn {
+      background: var(--accent-ink);
+      color: var(--accent);
+      justify-content: space-between;
+      padding: 1.05rem 1.3rem;
+    }
+    .cta .btn:hover { background: #232326; color: #fff; }
+    .cta .btn span { display: inline-flex; align-items: center; gap: .55rem; }
+    .cta .btn em {
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .06em;
+      opacity: .6;
+    }
+    .cta .btn--outline {
+      background: transparent;
+      color: var(--accent-ink);
+      border-color: rgba(10, 10, 11, .3);
+    }
+    .cta .btn--outline:hover { background: rgba(10, 10, 11, .08); color: var(--accent-ink); }
+
+    /* ============================================================
+       17. FOOTER
+       ============================================================ */
+    .site-footer {
+      width: 100%;
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      background: var(--bg-panel);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr));
+      gap: 2.5rem;
+      padding-block: clamp(2.5rem, 5vw, 4rem) 2.5rem;
+    }
+    .footer-brand .brand { margin-bottom: 1.1rem; }
+    .footer-brand p {
+      font-size: .85rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 34ch;
+    }
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.1rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .65rem; }
+    .footer-col a, .footer-col button {
+      font-size: .855rem;
+      color: var(--ink-2);
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      transition: color .18s ease;
+    }
+    .footer-col a:hover, .footer-col button:hover { color: var(--accent); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--line);
+      padding-block: 1.35rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 3.5rem;
     }
+    .footer-bottom .mono { color: var(--ink-3); }
 
-    .btn-hero {
-      background: var(--accent);
-      color: var(--accent-text);
-      border: none;
-      padding: 0.9rem 1.8rem;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: var(--shadow-md);
-    }
-    .btn-hero:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-    }
-
-    /* Bento Grid for Landing */
-    .bento-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.25rem;
+    /* ============================================================
+       18. STUDIO
+       ============================================================ */
+    #landing-view {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      text-align: left;
     }
 
-    .bento-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 1.75rem;
-      box-shadow: var(--shadow-sm);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    .bento-card:hover {
-      border-color: var(--border-strong);
-      transform: translateY(-2px);
-    }
-
-    .bento-icon {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
-
-    .bento-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-
-    .bento-sub {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
-    /* Studio Workspace View */
     #studio-view {
       display: none;
       flex-direction: column;
       width: 100%;
+      max-width: 1360px;
+      margin-inline: auto;
+      padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3.25rem) 3rem;
     }
 
-    .studio-header {
+    .studio-head {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
+      align-items: flex-end;
+      gap: 1.5rem;
       flex-wrap: wrap;
-      gap: 1rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 0;
     }
+    .studio-head h1 {
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: .45rem;
+    }
+    .studio-head p { font-size: .875rem; color: var(--ink-2); max-width: 56ch; line-height: 1.6; }
+    .studio-head .mono { display: block; margin-bottom: .9rem; }
 
-    /* Tool Tabs Bar */
-    .tools-nav {
+    /* Tab bar — underline, not pills */
+    .tool-tabs {
       display: flex;
-      gap: 0.4rem;
       overflow-x: auto;
       scrollbar-width: none;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      padding: 0.3rem;
-      border-radius: 14px;
-      width: 100%;
-      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 1.75rem;
     }
-    .tools-nav::-webkit-scrollbar { display: none; }
+    .tool-tabs::-webkit-scrollbar { display: none; }
+    .tool-tabs.fade-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
+    .tool-tabs.fade-l { -webkit-mask-image: linear-gradient(90deg, transparent, #000 56px); mask-image: linear-gradient(90deg, transparent, #000 56px); }
+    .tool-tabs.fade-l.fade-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 56px, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, transparent, #000 56px, #000 calc(100% - 56px), transparent); }
 
     .tool-tab {
-      background: transparent;
+      background: none;
       border: none;
-      color: var(--text-secondary);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.55rem 0.85rem;
-      border-radius: 9px;
+      border-bottom: 2px solid transparent;
+      color: var(--ink-2);
+      font-size: .84rem;
+      font-weight: 500;
+      padding: .8rem .1rem;
+      margin-right: 1.6rem;
+      margin-bottom: -1px;
       cursor: pointer;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      transition: color .18s ease, border-color .18s ease;
     }
-    .tool-tab:hover { color: var(--text-primary); }
-    .tool-tab.active {
-      background: var(--bg-card);
-      color: var(--text-primary);
-      box-shadow: var(--shadow-sm);
+    .tool-tab:last-child { margin-right: 0; }
+    .tool-tab:hover { color: var(--ink); }
+    .tool-tab.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+    .tool-tab i {
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .64rem;
+      color: var(--ink-3);
+    }
+    .tool-tab.active i { color: var(--accent); }
+
+    .studio-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 272px;
+      gap: 2.5rem;
+      align-items: start;
     }
 
-    /* Main Working Area */
     .studio-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 2rem;
-      box-shadow: var(--shadow-md);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg-panel);
+      padding: clamp(1.35rem, 2.5vw, 2rem);
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      min-width: 0;
     }
 
-    .panel {
-      display: none;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
+    .panel { display: none; flex-direction: column; gap: 1.35rem; }
     .panel.active { display: flex; }
 
+    .panel-meta {
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: 1rem;
+      padding-bottom: 1.35rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--accent);
+      padding-top: .2rem;
+    }
     .panel-meta h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.25rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin-bottom: .4rem;
     }
-    .panel-meta p {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-    }
+    .panel-meta p { font-size: .865rem; color: var(--ink-2); line-height: 1.6; max-width: 62ch; }
 
-    /* Drag & Drop Areas */
+    /* Dropzones — flat, dashed hairline */
     .dropzone {
-      border: 1.5px dashed var(--border-strong);
-      background: var(--bg-dropzone);
-      border-radius: 14px;
-      padding: 1.75rem 1rem;
-      text-align: center;
+      border: 1px dashed var(--line-hard);
+      border-radius: 4px;
+      background: var(--bg-sunk);
+      padding: 1.9rem 1.25rem;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      position: relative;
+      text-align: center;
+      gap: .4rem;
+      transition: border-color .2s ease, background-color .2s ease;
     }
-    .dropzone:hover {
-      border-color: var(--text-secondary);
-      background: var(--bg-subtle);
-    }
+    .dropzone:hover { border-color: var(--accent); background: var(--bg-raise); }
+    .dropzone.is-loaded { border-style: solid; border-color: var(--accent); }
     .dropzone input { display: none; }
-    .drop-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .drop-hint {
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-    }
+    .drop-ico { color: var(--ink-3); margin-bottom: .5rem; transition: color .2s ease; }
+    .dropzone:hover .drop-ico { color: var(--accent); }
+    .drop-ico svg { width: 22px; height: 22px; }
+    .drop-title { font-size: .9rem; font-weight: 600; }
+    .drop-hint { font-size: .775rem; color: var(--ink-3); }
     .file-badge {
       display: none;
-      margin-top: 0.4rem;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      padding: 0.3rem 0.65rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
+      margin-top: .7rem;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-family: 'JetBrains Mono', monospace;
-      color: var(--text-primary);
+      font-size: .72rem;
+      color: var(--ink);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-line);
+      padding: .3rem .6rem;
+      border-radius: 3px;
     }
 
-    /* Controls Grid */
     .controls-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 1rem;
     }
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-secondary);
+    .field { display: flex; flex-direction: column; gap: .45rem; }
+    .field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--ink-3);
     }
     input[type="text"], input[type="number"], select {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      padding: 0.7rem 0.85rem;
-      border-radius: 10px;
-      font-size: 0.875rem;
+      background: var(--bg-sunk);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+      padding: .72rem .85rem;
+      font-size: .875rem;
+      font-family: 'JetBrains Mono', monospace;
       outline: none;
       width: 100%;
+      transition: border-color .18s ease;
     }
-    input:focus, select:focus {
-      border-color: var(--text-secondary);
+    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--accent); }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B8B90' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .8rem center;
+      padding-right: 2.2rem;
     }
 
-    /* Process Button */
     .btn-exec {
-      background: var(--accent);
-      color: var(--accent-text);
-      border: none;
-      border-radius: 12px;
-      padding: 0.9rem 1.25rem;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      box-shadow: var(--shadow-sm);
-    }
-    .btn-exec:hover:not(:disabled) {
-      background: var(--accent-hover);
-    }
-    .btn-exec:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* Terminal Inspector Window */
-    .inspector-output {
-      background: var(--code-bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1.25rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--code-text);
-      max-height: 280px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      display: none;
-    }
-
-    /* Status Bar */
-    .status-panel {
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .status-left {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #F59E0B;
-    }
-    .status-dot.ready { background: var(--indicator-active); }
-    .status-dot.busy { background: #3B82F6; animation: blink 1s infinite; }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Footer */
-    footer {
+      gap: .75rem;
       width: 100%;
-      max-width: 1080px;
-      margin-top: 3.5rem;
-      padding: 2rem 1.5rem 1rem;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.84rem;
-      color: var(--text-tertiary);
+      background: var(--btn-bg);
+      color: var(--btn-ink);
+      border: none;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color .18s ease;
     }
-    .footer-copy {
-      color: var(--text-secondary);
-      font-weight: 500;
+    .btn-exec:hover:not(:disabled) { background: var(--btn-hover); }
+    .btn-exec:disabled { opacity: .3; cursor: not-allowed; }
+    .btn-exec em {
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .06em;
+      opacity: .55;
     }
-    .footer-links {
+
+    .inspector-output {
+      display: none;
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      line-height: 1.7;
+      color: var(--code-ink);
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .status {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      justify-content: space-between;
+      gap: 1rem;
       flex-wrap: wrap;
-      justify-content: center;
+      padding-top: 1.35rem;
+      border-top: 1px solid var(--line);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--ink-2);
     }
-    .footer-link {
-      color: var(--text-secondary);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-weight: 500;
+    .status-left { display: flex; align-items: center; gap: .55rem; }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #D9A21B;
+      flex-shrink: 0;
+      transition: background-color .2s ease;
     }
-    .footer-link:hover { color: var(--text-primary); }
-    .footer-link svg { width: 14px; height: 14px; }
+    .status-dot.ready { background: var(--accent); }
+    .status-dot.busy { background: #4B8BFF; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+    /* Studio side rail */
+    .rail { display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 88px; }
+    .rail-block { border-top: 1px solid var(--line); padding-top: 1.1rem; }
+    .rail-block h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: .9rem;
+    }
+    .rail-block p { font-size: .82rem; color: var(--ink-2); line-height: 1.65; }
+    .rail-block p b { color: var(--ink); font-weight: 600; }
+    .rail-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+    .rail-list li {
+      display: grid;
+      grid-template-columns: .9rem minmax(0, 1fr);
+      gap: .6rem;
+      font-size: .8rem;
+      color: var(--ink-2);
+      line-height: 1.55;
+    }
+    .rail-list li::before {
+      content: '';
+      width: 9px;
+      height: 1px;
+      background: var(--accent);
+      margin-top: .55rem;
+    }
+
+    /* ============================================================
+       19. REVEAL
+       ============================================================ */
+    html.js-reveal .reveal {
+      opacity: 0;
+      transition: opacity .6s ease;
+      transition-delay: var(--d, 0ms);
+    }
+    html.js-reveal .reveal.in { opacity: 1; }
+
+    /* ============================================================
+       20. RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1080px) {
+      .hero-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .section-head { grid-template-columns: 1fr; gap: 1.25rem; align-items: start; }
+      .showcase { grid-template-columns: 1fr; }
+      .studio-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+      .rail { position: static; }
+      .nav, .header-meta { display: none; }
+      .cta { grid-template-columns: 1fr; gap: 2rem; }
+      .cta-actions { max-width: 380px; }
+    }
+
+    @media (max-width: 860px) {
+      .numbers { grid-template-columns: repeat(2, 1fr); gap: 2rem 0; }
+      .number:nth-child(3) { border-left: none; padding-left: 0; }
+      .number:nth-child(4) { padding-right: 0; }
+      .steps { grid-template-columns: 1fr; gap: 2.25rem 0; }
+      .engines { grid-template-columns: 1fr; }
+      .engine,
+      .engine:nth-child(odd),
+      .engine:nth-child(even) { padding-left: 0; padding-right: 0; border-right: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-brand { grid-column: span 2; }
+      .wave { height: 132px; }
+      .wave svg { height: 92px; }
+      .ruler span:nth-child(even) { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner { height: 58px; gap: 1rem; }
+      .hero-actions { gap: 1rem; }
+      .hero-actions .btn { width: 100%; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions .link { justify-content: center; }
+      .numbers { grid-template-columns: 1fr; gap: 1.75rem 0; }
+      .number,
+      .number:nth-child(3),
+      .number:nth-child(4) { border-left: none; padding: 0; }
+      .number + .number { border-top: 1px solid var(--line); padding-top: 1.75rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-brand { grid-column: span 1; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .usecases { grid-template-columns: 1fr; gap: 2rem 0; }
+      .wave { height: 108px; }
+      .wave svg { height: 72px; }
+      .deck-bar .spacer { display: none; }
+      .cta-actions { max-width: none; }
+      /* Let the flag readout sit under the label rather than beside it */
+      .btn-exec { flex-direction: column; align-items: flex-start; gap: .35rem; }
+      .btn-exec em { opacity: .5; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+      html.js-reveal .reveal { opacity: 1 !important; }
+      .formats-track { animation: none; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="app-wrapper">
-    <!-- Header -->
-    <header>
-      <div class="brand" onclick="navigateTo('landing')">
-        <div class="brand-icon">V</div>
-        <span>Vortex Studio</span>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-secondary" id="btn-workspace-toggle" onclick="navigateTo('studio')">
-          Launch Studio ⚡
-        </button>
-        <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
-          <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+  <!-- ==================== HEADER ==================== -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+  <header class="site-header" id="site-header">
+    <div class="shell header-inner">
+      <button class="brand" onclick="navigateTo('landing')" aria-label="Vortex Studio home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+            <path d="M3 12h3l3-7 4 14 3-7h5"/>
+          </svg>
+        </span>
+        Vortex Studio<sup>&reg;</sup>
+      </button>
+
+      <nav class="nav" aria-label="Sections">
+        <a href="#engines">Engines</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#compare">Compare</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <span class="header-meta">v11 engines &nbsp;/&nbsp; wasm &nbsp;/&nbsp; 0 uploads</span>
+
+      <div class="header-actions">
+        <button class="btn" id="btn-workspace-toggle" onclick="navigateTo('studio')">Open the studio</button>
+        <button class="icon-btn" id="theme-btn" aria-label="Toggle colour theme">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M12 3v1.5M12 19.5V21M4.9 4.9l1.1 1.1M18 18l1.1 1.1M3 12h1.5M19.5 12H21M4.9 19.1L6 18M18 6l1.1-1.1"/>
+            <circle cx="12" cy="12" r="3.6"/>
           </svg>
         </button>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- VIEW 1: LANDING PAGE -->
-    <main id="landing-view">
-      <div class="hero-badge">
-        <span></span>
-        100% Client-Side WebAssembly • Zero Data Uploaded
-      </div>
-      
-      <h1 class="hero-title">Manipulate Video & Audio with Pure Local Power.</h1>
-      
-      <p class="hero-desc">
-        Mux desynced tracks, losslessly slice 10-hour courses, crunch files under WhatsApp limits, and snap pristine 4K frames. Powered by FFmpeg running entirely inside your browser's private memory.
-      </p>
+  <!-- ==================== LANDING ==================== -->
+  <main id="landing-view">
 
-      <div class="hero-cta-group">
-        <button class="btn-hero" onclick="openTool('tool-mux')">
-          Mux Audio & Video Now ⚡
-        </button>
-        <button class="btn-secondary" onclick="openTool('tool-inspect')">
-          Inspect Streams (ffprobe)
-        </button>
-      </div>
+    <!-- ---------- HERO ---------- -->
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <div class="hero-eyebrow">
+              <span class="dot" aria-hidden="true"></span>
+              <span class="mono">FFmpeg.wasm build 0.12.10 &nbsp;·&nbsp; running locally</span>
+            </div>
 
-      <!-- Bento Features Selection -->
-      <div class="bento-grid">
-        <div class="bento-card" onclick="openTool('tool-mux')">
-          <span class="bento-icon">🎛️</span>
-          <h3 class="bento-title">Audio / Video Muxer</h3>
-          <p class="bento-sub">Fuses standalone YouTube/VOD video streams with external audio tracks instantly without re-encoding.</p>
-        </div>
+            <h1 class="hero-title">
+              <span>Edit video &amp; audio</span>
+              <span>without the upload.</span>
+            </h1>
 
-        <div class="bento-card" onclick="openTool('tool-inspect')">
-          <span class="bento-icon">🔍</span>
-          <h3 class="bento-title">FFprobe Inspector</h3>
-          <p class="bento-sub">Examine container specs, video codecs (AV1, H.264, VP9), audio sample rates, and bitrates without installing MediaInfo.</p>
-        </div>
+            <p class="hero-desc">
+              Eleven FFmpeg engines compiled to WebAssembly and running inside your browser's own memory.
+              Mux, trim, compress, reframe and probe your media — with <b>nothing ever sent to a server</b>.
+            </p>
 
-        <div class="bento-card" onclick="openTool('tool-trim')">
-          <span class="bento-icon">✂️</span>
-          <h3 class="bento-title">Lossless Stream Trimmer</h3>
-          <p class="bento-sub">Slice exact segments from massive 10GB lectures instantly. Zero quality loss, zero waiting time.</p>
-        </div>
+            <div class="hero-actions">
+              <button class="btn" onclick="openTool('tool-mux')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                Open the studio
+              </button>
+              <a class="link" href="#engines">
+                See the eleven engines
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </div>
 
-        <div class="bento-card" onclick="openTool('tool-extract')">
-          <span class="bento-icon">🎙️</span>
-          <h3 class="bento-title">Voice / Audio Stripper</h3>
-          <p class="bento-sub">Rip audio out of video files as MP3 or M4A for offline podcast listening and AI Whisper transcription.</p>
-        </div>
-
-        <div class="bento-card" onclick="openTool('tool-reframe')">
-          <span class="bento-icon">📱</span>
-          <h3 class="bento-title">Shorts & Reels 9:16 Re-framer</h3>
-          <p class="bento-sub">Center crop or add blurred background pillars to widescreen 16:9 videos for vertical social platforms.</p>
-        </div>
-
-        <div class="bento-card" onclick="openTool('tool-volume')">
-          <span class="bento-icon">🔊</span>
-          <h3 class="bento-title">Audio Normalizer & Booster</h3>
-          <p class="bento-sub">Amplify quiet Zoom and Google Meet recordings up to 300% without re-encoding the video stream.</p>
+          <dl class="spec">
+            <div class="spec-row">
+              <dt>Engine</dt>
+              <dd>FFmpeg 6.1 → WebAssembly<small>Identical CLI flags, no wrapper API</small></dd>
+            </div>
+            <div class="spec-row">
+              <dt>Threading</dt>
+              <dd>Multi-core when isolated<small>Silent single-thread fallback otherwise</small></dd>
+            </div>
+            <div class="spec-row">
+              <dt>File I/O</dt>
+              <dd>In-memory only<small>No multipart upload, no temp bucket</small></dd>
+            </div>
+            <div class="spec-row">
+              <dt>Account</dt>
+              <dd>Not required<small>No cookies, no tracking, no email gate</small></dd>
+            </div>
+          </dl>
         </div>
       </div>
-    </main>
 
-    <!-- VIEW 2: MULTI-TOOL STUDIO WORKSPACE -->
-    <main id="studio-view">
-      <div class="studio-header">
-        <div>
-          <h2 style="font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">Media Studio Workspace</h2>
-          <p style="font-size:0.85rem; color:var(--text-secondary);">Select an engine utility to process files in your local sandbox.</p>
+      <!-- The deck: a working waveform read-out -->
+      <div class="shell">
+        <div class="deck">
+          <div class="deck-frame">
+            <div class="deck-bar">
+              <span class="deck-lamp">ENGINE READY</span>
+              <span class="mono">lecture_recording.mp4</span>
+              <span class="spacer"></span>
+              <span class="mono" id="deck-mode">STEREO · 44 100 HZ · 32-BIT FLOAT</span>
+            </div>
+
+            <div class="ruler" id="ruler" aria-hidden="true"></div>
+
+            <div class="wave">
+              <svg id="waveform" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="wave-select" style="left:26.5%; width:16.5%">
+                <span class="wave-select-tag">SELECTION · 00:44</span>
+              </div>
+              <div class="wave-head" style="left:43%"></div>
+            </div>
+
+            <div class="deck-foot">
+              <span class="mono">AUDIO TRACK</span>
+              <span class="mono">MUTE —</span>
+              <span class="mono">SOLO —</span>
+              <span class="spacer"></span>
+              <span class="mono">L&nbsp;&nbsp;&nbsp;&nbsp;R</span>
+            </div>
+          </div>
         </div>
-        <button class="btn-secondary" onclick="navigateTo('landing')">← Back to Overview</button>
       </div>
+    </section>
 
-      <!-- Navigation Tabs for All 10 Utilities -->
-      <nav class="tools-nav">
-        <button class="tool-tab active" onclick="switchTool('tool-mux')">🎵 Mux Tracks</button>
-        <button class="tool-tab" onclick="switchTool('tool-inspect')">🔍 ffprobe Inspector</button>
-        <button class="tool-tab" onclick="switchTool('tool-trim')">✂️ Lossless Trim</button>
-        <button class="tool-tab" onclick="switchTool('tool-extract')">🎙️ Extract Audio</button>
-        <button class="tool-tab" onclick="switchTool('tool-mute')">🔇 Strip Audio (Mute)</button>
-        <button class="tool-tab" onclick="switchTool('tool-volume')">🔊 Boost Volume</button>
-        <button class="tool-tab" onclick="switchTool('tool-reframe')">📱 9:16 Vertical Reframe</button>
-        <button class="tool-tab" onclick="switchTool('tool-shrink')">📦 Target Compressor</button>
-        <button class="tool-tab" onclick="switchTool('tool-sync')">⏱️ Fix Audio Lag</button>
-        <button class="tool-tab" onclick="switchTool('tool-gif')">🖼️ Palette GIF</button>
-        <button class="tool-tab" onclick="switchTool('tool-snap')">📸 Frame Grabber</button>
-      </nav>
+    <!-- ---------- FORMAT STRIP ---------- -->
+    <div class="formats" aria-hidden="true">
+      <div class="formats-track">
+        <span>H.264</span><span>HEVC</span><span>AV1</span><span>VP9</span><span>AAC</span><span>MP3</span><span>Opus</span><span>FLAC</span><span>MP4</span><span>WebM</span><span>MKV</span><span>MOV</span><span>palettegen</span><span>lanczos</span><span>libx264</span><span>SharedArrayBuffer</span>
+        <span>H.264</span><span>HEVC</span><span>AV1</span><span>VP9</span><span>AAC</span><span>MP3</span><span>Opus</span><span>FLAC</span><span>MP4</span><span>WebM</span><span>MKV</span><span>MOV</span><span>palettegen</span><span>lanczos</span><span>libx264</span><span>SharedArrayBuffer</span>
+      </div>
+    </div>
 
-      <!-- Central Studio Card -->
+    <!-- ---------- NUMBERS ---------- -->
+    <section class="section section--flush">
+      <div class="shell">
+        <div class="numbers">
+          <div class="number reveal">
+            <span class="mono">Engines</span>
+            <b><span data-count="11">0</span></b>
+            <p>Mux, trim, compress, reframe, probe, capture — one page.</p>
+          </div>
+          <div class="number reveal" style="--d:70ms">
+            <span class="mono">Bytes uploaded</span>
+            <b><span data-count="0">0</span></b>
+            <p>Your file is read into the tab and never leaves it.</p>
+          </div>
+          <div class="number reveal" style="--d:140ms">
+            <span class="mono">On-device</span>
+            <b><span data-count="100">0</span>%</b>
+            <p>No queue, no upload bar, no waiting room.</p>
+          </div>
+          <div class="number reveal" style="--d:210ms">
+            <span class="mono">Size ceiling</span>
+            <b>∞</b>
+            <p>Bounded by your RAM, not by a pricing tier.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- WORKFLOW ---------- -->
+    <section class="section" id="workflow">
+      <div class="shell">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="mono">01 — Workflow</span>
+            <h2 class="section-title">Three steps, and <em>no waiting room.</em></h2>
+          </div>
+          <p class="section-note reveal" style="--d:80ms">
+            Everything happens in the tab you already have open. There is no server-side queue to sit in and nothing left behind to clean up afterwards.
+          </p>
+        </div>
+
+        <div class="steps">
+          <article class="step reveal">
+            <span class="step-idx">01</span>
+            <h3>Drop a file</h3>
+            <p>The browser reads it straight into memory. No multipart upload, no progress bar crawling toward a data centre on another continent.</p>
+          </article>
+          <article class="step reveal" style="--d:90ms">
+            <span class="step-idx">02</span>
+            <h3>Pick an engine</h3>
+            <p>Eleven pre-tuned FFmpeg recipes — stream copy where quality matters, x264 where file size does. Sensible defaults on every field.</p>
+          </article>
+          <article class="step reveal" style="--d:180ms">
+            <span class="step-idx">03</span>
+            <h3>Save the result</h3>
+            <p>The output buffer is handed back to your disk as a Blob. No watermark, no email gate, no link that expires in 24 hours.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ENGINE INDEX ---------- -->
+    <section class="section" id="engines">
+      <div class="shell">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="mono">02 — Engine index</span>
+            <h2 class="section-title">Eleven tools that used to <em>need a desktop app.</em></h2>
+          </div>
+          <p class="section-note reveal" style="--d:80ms">
+            Each entry is a purpose-built FFmpeg pipeline. Pick one to open it directly in the studio, or switch between all of them once you're there.
+          </p>
+        </div>
+
+        <div class="engines">
+          <button class="engine reveal" onclick="openTool('tool-mux')">
+            <span class="engine-idx">01</span>
+            <span>
+              <span class="engine-name">Audio &amp; Video Muxer <code>-c:v copy</code></span>
+              <span class="engine-desc">Fuses a standalone high-resolution video stream with an external audio track into one MP4. The video bitstream is copied byte-for-byte, so nothing is re-encoded.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-inspect')">
+            <span class="engine-idx">02</span>
+            <span>
+              <span class="engine-name">Stream Inspector <code>ffprobe</code></span>
+              <span class="engine-desc">Read container specs, codecs, pixel formats, sample rates and bitrates without installing MediaInfo on a locked-down machine.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" onclick="openTool('tool-trim')">
+            <span class="engine-idx">03</span>
+            <span>
+              <span class="engine-name">Lossless Stream Trimmer <code>-c copy</code></span>
+              <span class="engine-desc">Slice an exact segment out of a 10 GB lecture in about a second. Keyframe-accurate, zero re-encoding, zero generation loss.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-extract')">
+            <span class="engine-idx">04</span>
+            <span>
+              <span class="engine-name">Audio Extractor <code>libmp3lame</code></span>
+              <span class="engine-desc">Rip the soundtrack out as a 192 kbps MP3, or copy the original AAC stream into M4A instantly for Whisper transcription.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" onclick="openTool('tool-shrink')">
+            <span class="engine-idx">05</span>
+            <span>
+              <span class="engine-name">Target Size Compressor <code>-b:v</code></span>
+              <span class="engine-desc">Hit an exact ceiling — Discord's 25 MB, WhatsApp's 16 MB — by computing the bitrate budget up front instead of guessing at a quality slider.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-reframe')">
+            <span class="engine-idx">06</span>
+            <span>
+              <span class="engine-name">9:16 Vertical Re-framer <code>crop</code></span>
+              <span class="engine-desc">Centre-crop widescreen 16:9 footage into vertical frames for YouTube Shorts, Instagram Reels and TikTok.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" onclick="openTool('tool-volume')">
+            <span class="engine-idx">07</span>
+            <span>
+              <span class="engine-name">Volume Booster <code>volume=3.0</code></span>
+              <span class="engine-desc">Lift quiet Zoom and Google Meet recordings up to 300%. The audio is filtered while the video stream is copied untouched.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-gif')">
+            <span class="engine-idx">08</span>
+            <span>
+              <span class="engine-name">2-Pass Palette GIF <code>palettegen</code></span>
+              <span class="engine-desc">Samples the clip's real colour distribution into a custom 256-colour palette, then maps every frame back through it. Smooth gradients, no banding.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" onclick="openTool('tool-sync')">
+            <span class="engine-idx">09</span>
+            <span>
+              <span class="engine-name">Desync Realignment <code>-itsoffset</code></span>
+              <span class="engine-desc">Nudge a lagging or early audio track forward or backward with a non-destructive input timestamp offset. Both streams are copied.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-mute')">
+            <span class="engine-idx">10</span>
+            <span>
+              <span class="engine-name">Instant Muter <code>-an</code></span>
+              <span class="engine-desc">Strip every audio stream out of the container without touching a single video frame. Finishes in well under a second.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <button class="engine reveal" onclick="openTool('tool-snap')">
+            <span class="engine-idx">11</span>
+            <span>
+              <span class="engine-name">Frame Grabber <code>-vframes 1</code></span>
+              <span class="engine-desc">Capture a full-resolution PNG poster at any precise timestamp — for thumbnails, chapter art and video previews.</span>
+            </span>
+            <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </button>
+
+          <div class="engine" style="cursor:default;border-bottom:1px solid var(--line)">
+            <span class="engine-idx">—</span>
+            <span>
+              <span class="engine-name">All eleven, one workspace</span>
+              <span class="engine-desc">Switch between every engine without reloading or losing the page state.</span>
+            </span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SHOWCASE ---------- -->
+    <section class="section">
+      <div class="shell">
+        <div class="showcase">
+          <div class="reveal">
+            <span class="mono" style="display:block;margin-bottom:1.25rem;">03 — Under the hood</span>
+            <h2 class="section-title" style="margin-bottom:1.1rem;">Real FFmpeg. Real flags. <em>No abstraction tax.</em></h2>
+            <p class="section-note">
+              Vortex doesn't wrap a proprietary transcoding API and call it a day. It ships the actual FFmpeg binary compiled to WebAssembly and drives it with the same command-line flags you'd type in a terminal.
+            </p>
+
+            <ul class="showcase-list">
+              <li><span><b>Multi-threaded when it can be.</b> If the page is cross-origin isolated, the threaded core loads and every available CPU core gets used.</span></li>
+              <li><span><b>Graceful single-thread fallback.</b> Deployed without COOP/COEP headers? It switches to the ESM core instead of breaking.</span></li>
+              <li><span><b>Stream copy by default.</b> Every engine that can avoid re-encoding does, because re-encoding is where quality and time both go to die.</span></li>
+              <li><span><b>Live engine log.</b> Every line FFmpeg emits is streamed to the inspector, so you can see exactly what ran and why.</span></li>
+            </ul>
+          </div>
+
+          <div class="terminal reveal" style="--d:100ms">
+            <div class="terminal-bar">
+              <span class="mono">ffprobe — local sandbox</span>
+            </div>
+            <div class="terminal-body">
+<span class="l"><span class="d">$</span> <span class="a">ffprobe</span> -hide_banner lecture_recording.mp4</span>
+<span class="l"> </span>
+<span class="l">Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'lecture.mp4':</span>
+<span class="l">  Duration: <span class="w">02:47:13.40</span>, start: 0.000000, bitrate: <span class="w">2841 kb/s</span></span>
+<span class="l">  Stream #0:0: <span class="a">Video</span>: h264 (High), yuv420p(tv), <span class="w">1920x1080</span> [SAR 1:1]</span>
+<span class="l">              30 fps, 30 tbr, 15360 tbn</span>
+<span class="l">  Stream #0:1: <span class="a">Audio</span>: aac (LC), <span class="w">48000 Hz</span>, stereo, fltp, 128 kb/s</span>
+<span class="l"> </span>
+<span class="l"><span class="d">$</span> <span class="a">ffmpeg</span> -ss 01:12:00 -to 01:12:45 -i lecture.mp4 \</span>
+<span class="l">         -c copy chapter_07.mp4</span>
+<span class="l"> </span>
+<span class="l"><span class="g">frame=  1350  time=00:00:44.98  speed=412x</span></span>
+<span class="l"><span class="d">output written to local blob · no network I/O</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- COMPARE ---------- -->
+    <section class="section" id="compare">
+      <div class="shell">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="mono">04 — Comparison</span>
+            <h2 class="section-title">Why not just use <em>a cloud converter?</em></h2>
+          </div>
+          <p class="section-note reveal" style="--d:80ms">
+            Because you're handing a gigabyte of footage to a machine you don't control, then waiting in a queue for it back — and paying per file for the privilege.
+          </p>
+        </div>
+
+        <div class="table-scroll reveal">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th scope="col">&nbsp;</th>
+                <th scope="col" class="vx vx-col">Vortex Studio</th>
+                <th scope="col">Cloud converters</th>
+                <th scope="col">Desktop editors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">File leaves your device</th>
+                <td class="vx-col"><span class="cell y">Never</span></td>
+                <td><span class="cell n">Always</span></td>
+                <td><span class="cell y">Never</span></td>
+              </tr>
+              <tr>
+                <th scope="row">File-size limit</th>
+                <td class="vx-col"><span class="cell y">Your RAM</span></td>
+                <td><span class="cell m">100 MB – 2 GB tiers</span></td>
+                <td><span class="cell y">Your disk</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Cost per conversion</th>
+                <td class="vx-col"><span class="cell y">Free, unlimited</span></td>
+                <td><span class="cell n">Credits &amp; subscriptions</span></td>
+                <td><span class="cell m">Licence fees</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Install required</th>
+                <td class="vx-col"><span class="cell y">None — it's a URL</span></td>
+                <td><span class="cell y">None</span></td>
+                <td><span class="cell n">Gigabytes of installers</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Works offline</th>
+                <td class="vx-col"><span class="cell y">After first load</span></td>
+                <td><span class="cell n">Never</span></td>
+                <td><span class="cell y">Always</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Watermarks &amp; email gates</th>
+                <td class="vx-col"><span class="cell y">None</span></td>
+                <td><span class="cell n">Common</span></td>
+                <td><span class="cell m">Export limits</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Time to first result</th>
+                <td class="vx-col"><span class="cell y">Instant — no upload</span></td>
+                <td><span class="cell n">Upload + queue + download</span></td>
+                <td><span class="cell m">Launch + import</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- USE CASES ---------- -->
+    <section class="section">
+      <div class="shell">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="mono">05 — Users</span>
+            <h2 class="section-title">Built for the jobs <em>people actually have.</em></h2>
+          </div>
+        </div>
+
+        <div class="usecases">
+          <article class="usecase reveal">
+            <span class="mono">Students &amp; lecturers</span>
+            <h3>Split a three-hour recording</h3>
+            <p>Cut a lecture into per-topic clips, or strip the audio into an MP3 for the commute — without a two-gigabyte upload first.</p>
+          </article>
+          <article class="usecase reveal" style="--d:70ms">
+            <span class="mono">Creators &amp; editors</span>
+            <h3>Re-frame and re-track</h3>
+            <p>Crop a widescreen cut for Shorts, mux a clean audio track onto a downloaded video stream, and pull poster frames in one sitting.</p>
+          </article>
+          <article class="usecase reveal" style="--d:140ms">
+            <span class="mono">Podcasters</span>
+            <h3>Rescue a bad recording</h3>
+            <p>Extract audio for transcription, normalise a guest's quiet microphone, and fix a track that drifted out of sync in the recorder.</p>
+          </article>
+          <article class="usecase reveal" style="--d:210ms">
+            <span class="mono">Developers &amp; QA</span>
+            <h3>Probe without a toolchain</h3>
+            <p>Inspect a container's codecs on a locked-down machine, or reproduce a media bug without installing FFmpeg just to run ffprobe.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- FAQ ---------- -->
+    <section class="section" id="faq">
+      <div class="shell">
+        <div class="section-head">
+          <div class="reveal">
+            <span class="mono">06 — Questions</span>
+            <h2 class="section-title">The things people <em>ask first.</em></h2>
+          </div>
+        </div>
+
+        <div class="faq">
+          <details class="reveal" open>
+            <summary>Are my files really never uploaded?</summary>
+            <div class="faq-body">
+              Correct. The page loads FFmpeg compiled to WebAssembly, and your file is read into the browser's own memory through the File API. The only network requests this app makes are the initial downloads of the FFmpeg core and the fonts. Once the engine lamp reads <code>READY</code>, you can disconnect from the internet entirely and every tool keeps working.
+            </div>
+          </details>
+
+          <details class="reveal" style="--d:50ms">
+            <summary>Is it genuinely free? What's the catch?</summary>
+            <div class="faq-body">
+              No catch and no account. There is no server doing the work, so there is no compute bill to pass on to you — that is the whole architectural point. No credits, no watermarks, no export limits, no upsell.
+            </div>
+          </details>
+
+          <details class="reveal" style="--d:100ms">
+            <summary>Why does the first load take a few seconds?</summary>
+            <div class="faq-body">
+              The browser is downloading the FFmpeg WebAssembly core — roughly 25–30 MB depending on whether the multi-threaded build is available. That happens once and is cached from then on. The status line at the bottom of the studio tells you exactly which core loaded.
+            </div>
+          </details>
+
+          <details class="reveal" style="--d:150ms">
+            <summary>What's the maximum file size I can process?</summary>
+            <div class="faq-body">
+              There's no application-level limit, but everything lives in memory, so the practical ceiling is your available RAM — and browsers cap a single tab's heap well below your total. As a rule of thumb, keep inputs under a couple of gigabytes. Lossless stream-copy operations (mux, trim, mute, sync) are dramatically lighter than re-encoding ones.
+            </div>
+          </details>
+
+          <details class="reveal" style="--d:200ms">
+            <summary>Does it work on my phone?</summary>
+            <div class="faq-body">
+              The interface is fully responsive and the engines do run, but mobile browsers enforce much tighter memory ceilings and are slower at WebAssembly. Short clips and audio-only jobs are fine; a multi-gigabyte video is not a good idea on a phone.
+            </div>
+          </details>
+
+          <details class="reveal" style="--d:250ms">
+            <summary>Why do some operations finish instantly and others take minutes?</summary>
+            <div class="faq-body">
+              Stream copy versus re-encode. Trimming, muting, muxing and sync-shifting only rearrange existing packets, so they run at hundreds of times real-time. Compression, re-framing and GIF rendering have to decode and re-encode every single frame — genuinely expensive work, and the same work a desktop editor would be doing.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- CTA ---------- -->
+    <section class="section">
+      <div class="shell">
+        <div class="cta reveal">
+          <div>
+            <h2>Your files never leave the tab.</h2>
+            <p>Open the studio and run your first job in the next thirty seconds. No account, no upload, no waiting room.</p>
+          </div>
+          <div class="cta-actions">
+            <button class="btn" onclick="openTool('tool-mux')">
+              <span>Launch Vortex Studio</span>
+              <em>11 ENGINES</em>
+            </button>
+            <button class="btn btn--outline" onclick="openTool('tool-inspect')">
+              <span>Inspect a file first</span>
+              <em>FFPROBE</em>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== STUDIO ==================== -->
+  <main id="studio-view">
+    <div class="studio-head">
+      <div>
+        <span class="mono">Workspace</span>
+        <h1>Media Studio</h1>
+        <p>Pick an engine, drop a file, and process it inside your local sandbox. Nothing here talks to a server.</p>
+      </div>
+      <button class="btn btn--ghost" onclick="navigateTo('landing')">← Back to overview</button>
+    </div>
+
+    <nav class="tool-tabs" id="tool-tabs" aria-label="Studio engines">
+      <button class="tool-tab active" data-tool="tool-mux" onclick="switchTool('tool-mux')"><i>01</i> Mux Tracks</button>
+      <button class="tool-tab" data-tool="tool-inspect" onclick="switchTool('tool-inspect')"><i>02</i> ffprobe Inspector</button>
+      <button class="tool-tab" data-tool="tool-trim" onclick="switchTool('tool-trim')"><i>03</i> Lossless Trim</button>
+      <button class="tool-tab" data-tool="tool-extract" onclick="switchTool('tool-extract')"><i>04</i> Extract Audio</button>
+      <button class="tool-tab" data-tool="tool-shrink" onclick="switchTool('tool-shrink')"><i>05</i> Target Compressor</button>
+      <button class="tool-tab" data-tool="tool-reframe" onclick="switchTool('tool-reframe')"><i>06</i> 9:16 Reframe</button>
+      <button class="tool-tab" data-tool="tool-volume" onclick="switchTool('tool-volume')"><i>07</i> Boost Volume</button>
+      <button class="tool-tab" data-tool="tool-gif" onclick="switchTool('tool-gif')"><i>08</i> Palette GIF</button>
+      <button class="tool-tab" data-tool="tool-sync" onclick="switchTool('tool-sync')"><i>09</i> Fix Audio Lag</button>
+      <button class="tool-tab" data-tool="tool-mute" onclick="switchTool('tool-mute')"><i>10</i> Strip Audio</button>
+      <button class="tool-tab" data-tool="tool-snap" onclick="switchTool('tool-snap')"><i>11</i> Frame Grabber</button>
+    </nav>
+
+    <div class="studio-layout">
       <div class="studio-card">
 
-        <!-- 1. MUXER -->
+        <!-- 01 MUXER -->
         <div id="tool-mux" class="panel active">
           <div class="panel-meta">
-            <h2>Audio & Video Muxer</h2>
-            <p>Fuses standalone high-res video (e.g. YouTube 1080p/4K AV1) and audio streams into one unified MP4.</p>
+            <span class="panel-idx">01</span>
+            <div>
+              <h2>Audio &amp; Video Muxer</h2>
+              <p>Fuses a standalone high-resolution video stream (e.g. YouTube 1080p/4K AV1) with an external audio track into one unified MP4. The video bitstream is copied, never re-encoded.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('mux-v-in').click()">
-            <span class="drop-title">Drop Video Stream (.mp4, .webm)</span>
-            <span class="drop-hint">Contains visual track only</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Drop the video stream</span>
+            <span class="drop-hint">.mp4, .webm — visual track only</span>
             <input type="file" id="mux-v-in" accept="video/*">
             <div id="mux-v-tag" class="file-badge"></div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('mux-a-in').click()">
-            <span class="drop-title">Drop Audio Track (.mp3, .m4a, .aac)</span>
-            <span class="drop-hint">Contains audio track</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="16" r="2.6"/>
+              </svg>
+            </div>
+            <span class="drop-title">Drop the audio track</span>
+            <span class="drop-hint">.mp3, .m4a, .aac</span>
             <input type="file" id="mux-a-in" accept="audio/*">
             <div id="mux-a-tag" class="file-badge"></div>
           </div>
-          <button class="btn-exec" id="btn-run-mux" disabled>Execute Stream Merge</button>
+
+          <button class="btn-exec" id="btn-run-mux" disabled>
+            Execute stream merge
+            <em>-c:v copy -c:a aac</em>
+          </button>
         </div>
 
-        <!-- 2. FFPROBE INSPECTOR -->
+        <!-- 02 INSPECTOR -->
         <div id="tool-inspect" class="panel">
           <div class="panel-meta">
-            <h2>Stream Inspector (ffprobe Engine)</h2>
-            <p>Analyze codecs, pixel formats, and bitrates without uploading files anywhere.</p>
+            <span class="panel-idx">02</span>
+            <div>
+              <h2>Stream Inspector</h2>
+              <p>Analyse containers, codecs, pixel formats and bitrates without uploading the file anywhere or installing MediaInfo.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('inspect-in').click()">
-            <span class="drop-title">Select Any Media File</span>
-            <span class="drop-hint">Video or Audio file</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select any media file</span>
+            <span class="drop-hint">Video or audio</span>
             <input type="file" id="inspect-in">
             <div id="inspect-tag" class="file-badge"></div>
           </div>
-          <button class="btn-exec" id="btn-run-inspect" disabled>Probe Stream Metadata</button>
+
+          <button class="btn-exec" id="btn-run-inspect" disabled>
+            Probe stream metadata
+            <em>-hide_banner</em>
+          </button>
           <div id="inspect-out" class="inspector-output"></div>
         </div>
 
-        <!-- 3. TRIMMER -->
+        <!-- 03 TRIMMER -->
         <div id="tool-trim" class="panel">
           <div class="panel-meta">
-            <h2>Lossless Stream Trimmer</h2>
-            <p>Slices footage instantly via stream copy without re-encoding frames.</p>
+            <span class="panel-idx">03</span>
+            <div>
+              <h2>Lossless Stream Trimmer</h2>
+              <p>Slices footage in about a second by copying packets instead of re-encoding frames. No generation loss, no render wait.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('trim-in').click()">
-            <span class="drop-title">Select Source Video</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select source video</span>
+            <span class="drop-hint">Any length — stream copy is instant</span>
             <input type="file" id="trim-in" accept="video/*">
             <div id="trim-tag" class="file-badge"></div>
           </div>
+
           <div class="controls-grid">
-            <div class="field-group">
-              <label>Start Timestamp (hh:mm:ss)</label>
+            <div class="field">
+              <label for="trim-start">Start timestamp · hh:mm:ss</label>
               <input type="text" id="trim-start" value="00:00:00">
             </div>
-            <div class="field-group">
-              <label>End Timestamp (hh:mm:ss)</label>
+            <div class="field">
+              <label for="trim-end">End timestamp · hh:mm:ss</label>
               <input type="text" id="trim-end" value="00:01:00">
             </div>
           </div>
-          <button class="btn-exec" id="btn-run-trim" disabled>Cut Video Instantly</button>
+
+          <button class="btn-exec" id="btn-run-trim" disabled>
+            Cut video instantly
+            <em>-ss -to -c copy</em>
+          </button>
         </div>
 
-        <!-- 4. EXTRACT AUDIO -->
+        <!-- 04 EXTRACT -->
         <div id="tool-extract" class="panel">
           <div class="panel-meta">
-            <h2>Audio Track Extractor</h2>
-            <p>Rips sound tracks out of videos for offline listening or transcription.</p>
+            <span class="panel-idx">04</span>
+            <div>
+              <h2>Audio Track Extractor</h2>
+              <p>Rips the soundtrack out of a video for offline listening or AI transcription. Choose a compressed MP3 or a lossless stream copy.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('extract-in').click()">
-            <span class="drop-title">Select Video File</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select video file</span>
+            <span class="drop-hint">The audio stream will be extracted</span>
             <input type="file" id="extract-in" accept="video/*">
             <div id="extract-tag" class="file-badge"></div>
           </div>
-          <div class="field-group">
-            <label>Output Audio Format</label>
+
+          <div class="field">
+            <label for="extract-format">Output format</label>
             <select id="extract-format">
-              <option value="mp3">MP3 (High Quality 192k)</option>
-              <option value="m4a">M4A (Lossless Copy - Instant)</option>
+              <option value="mp3">MP3 — high quality, 192 kbps</option>
+              <option value="m4a">M4A — lossless stream copy, instant</option>
             </select>
           </div>
-          <button class="btn-exec" id="btn-run-extract" disabled>Extract Audio Stream</button>
+
+          <button class="btn-exec" id="btn-run-extract" disabled>
+            Extract audio stream
+            <em>-vn</em>
+          </button>
         </div>
 
-        <!-- 5. STRIP AUDIO (MUTE) -->
-        <div id="tool-mute" class="panel">
-          <div class="panel-meta">
-            <h2>Audio Stripper (Instant Mute)</h2>
-            <p>Removes all background noise, dialogue, and microphone audio entirely.</p>
-          </div>
-          <div class="dropzone" onclick="document.getElementById('mute-in').click()">
-            <span class="drop-title">Select Video File</span>
-            <input type="file" id="mute-in" accept="video/*">
-            <div id="mute-tag" class="file-badge"></div>
-          </div>
-          <button class="btn-exec" id="btn-run-mute" disabled>Mute Video (Lossless)</button>
-        </div>
-
-        <!-- 6. VOLUME BOOSTER -->
-        <div id="tool-volume" class="panel">
-          <div class="panel-meta">
-            <h2>Audio Booster & Loudness Normalizer</h2>
-            <p>Amplifies quiet microphones in screen recordings and Zoom meetings.</p>
-          </div>
-          <div class="dropzone" onclick="document.getElementById('vol-in').click()">
-            <span class="drop-title">Select Video File</span>
-            <input type="file" id="vol-in" accept="video/*">
-            <div id="vol-tag" class="file-badge"></div>
-          </div>
-          <div class="controls-grid">
-            <div class="field-group">
-              <label>Gain Multiplier</label>
-              <select id="vol-mult">
-                <option value="1.5">+150% Volume Boost</option>
-                <option value="2.0">+200% Volume Boost</option>
-                <option value="3.0">+300% Maximum Boost</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn-exec" id="btn-run-vol" disabled>Boost Audio Levels</button>
-        </div>
-
-        <!-- 7. REFRAME 9:16 -->
-        <div id="tool-reframe" class="panel">
-          <div class="panel-meta">
-            <h2>9:16 Vertical Video Re-framer</h2>
-            <p>Formats 16:9 landscape clips for Instagram Reels, Shorts, and TikTok.</p>
-          </div>
-          <div class="dropzone" onclick="document.getElementById('reframe-in').click()">
-            <span class="drop-title">Select 16:9 Widescreen Video</span>
-            <input type="file" id="reframe-in" accept="video/*">
-            <div id="reframe-tag" class="file-badge"></div>
-          </div>
-          <button class="btn-exec" id="btn-run-reframe" disabled>Reframe to 9:16 Vertical</button>
-        </div>
-
-        <!-- 8. TARGET SHRINKER -->
+        <!-- 05 COMPRESSOR -->
         <div id="tool-shrink" class="panel">
           <div class="panel-meta">
-            <h2>Target File Size Compressor</h2>
-            <p>Calculates dynamic bitrates to compress videos below platform limits.</p>
+            <span class="panel-idx">05</span>
+            <div>
+              <h2>Target File Size Compressor</h2>
+              <p>Calculates a bitrate budget for your chosen ceiling and encodes to it — for when a platform rejects the file rather than the quality.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('shrink-in').click()">
-            <span class="drop-title">Select Video File</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select video file</span>
+            <span class="drop-hint">Re-encoding — heavier on long clips</span>
             <input type="file" id="shrink-in" accept="video/*">
             <div id="shrink-tag" class="file-badge"></div>
           </div>
-          <div class="field-group">
-            <label>Target Container Size</label>
+
+          <div class="field">
+            <label for="shrink-target">Target container size</label>
             <select id="shrink-target">
-              <option value="24">25 MB (Discord Standard)</option>
-              <option value="15">16 MB (WhatsApp Max Attachment)</option>
-              <option value="48">50 MB (Email Uploads)</option>
+              <option value="24">25 MB — Discord standard</option>
+              <option value="15">16 MB — WhatsApp max attachment</option>
+              <option value="48">50 MB — email uploads</option>
             </select>
           </div>
-          <button class="btn-exec" id="btn-run-shrink" disabled>Compress to Target Size</button>
+
+          <button class="btn-exec" id="btn-run-shrink" disabled>
+            Compress to target size
+            <em>libx264</em>
+          </button>
         </div>
 
-        <!-- 9. FIX AUDIO DESYNC -->
-        <div id="tool-sync" class="panel">
+        <!-- 06 REFRAME -->
+        <div id="tool-reframe" class="panel">
           <div class="panel-meta">
-            <h2>Audio Desync Realignment</h2>
-            <p>Shifts audio forward or backward without quality loss.</p>
+            <span class="panel-idx">06</span>
+            <div>
+              <h2>9:16 Vertical Re-framer</h2>
+              <p>Formats widescreen 16:9 footage for Instagram Reels, YouTube Shorts and TikTok with a centre crop. Audio is copied through.</p>
+            </div>
           </div>
-          <div class="dropzone" onclick="document.getElementById('sync-in').click()">
-            <span class="drop-title">Select Desynced Video</span>
-            <input type="file" id="sync-in" accept="video/*">
-            <div id="sync-tag" class="file-badge"></div>
+
+          <div class="dropzone" onclick="document.getElementById('reframe-in').click()">
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select a 16:9 widescreen video</span>
+            <span class="drop-hint">Re-encoding — expect a render wait</span>
+            <input type="file" id="reframe-in" accept="video/*">
+            <div id="reframe-tag" class="file-badge"></div>
           </div>
-          <div class="field-group">
-            <label>Audio Offset (Seconds)</label>
-            <input type="number" id="sync-offset" step="0.1" value="1.0">
-          </div>
-          <button class="btn-exec" id="btn-run-sync" disabled>Realign Tracks</button>
+
+          <button class="btn-exec" id="btn-run-reframe" disabled>
+            Reframe to 9:16 vertical
+            <em>crop=ih*(9/16):ih</em>
+          </button>
         </div>
 
-        <!-- 10. PALETTE GIF -->
+        <!-- 07 VOLUME -->
+        <div id="tool-volume" class="panel">
+          <div class="panel-meta">
+            <span class="panel-idx">07</span>
+            <div>
+              <h2>Audio Booster &amp; Normalizer</h2>
+              <p>Amplifies quiet microphones in screen recordings, Zoom calls and Google Meet captures. The video stream is copied, so only audio is reprocessed.</p>
+            </div>
+          </div>
+
+          <div class="dropzone" onclick="document.getElementById('vol-in').click()">
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select video file</span>
+            <span class="drop-hint">Video is copied untouched</span>
+            <input type="file" id="vol-in" accept="video/*">
+            <div id="vol-tag" class="file-badge"></div>
+          </div>
+
+          <div class="controls-grid">
+            <div class="field">
+              <label for="vol-mult">Gain multiplier</label>
+              <select id="vol-mult">
+                <option value="1.5">+150% — gentle lift</option>
+                <option value="2.0">+200% — noticeable boost</option>
+                <option value="3.0">+300% — maximum boost</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn-exec" id="btn-run-vol" disabled>
+            Boost audio levels
+            <em>-af volume</em>
+          </button>
+        </div>
+
+        <!-- 08 GIF -->
         <div id="tool-gif" class="panel">
           <div class="panel-meta">
-            <h2>2-Pass Cinema Palette GIF</h2>
-            <p>Generates crisp, color-band-free animated GIFs.</p>
+            <span class="panel-idx">08</span>
+            <div>
+              <h2>2-Pass Cinema Palette GIF</h2>
+              <p>First pass samples the clip's real colour distribution into a custom palette; second pass maps every frame back through it. Smooth gradients instead of banding.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('gif-in').click()">
-            <span class="drop-title">Select Short Video Clip</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select a short video clip</span>
+            <span class="drop-hint">Under 15 seconds — GIFs get large fast</span>
             <input type="file" id="gif-in" accept="video/*">
             <div id="gif-tag" class="file-badge"></div>
           </div>
+
           <div class="controls-grid">
-            <div class="field-group">
-              <label>Start Timestamp</label>
+            <div class="field">
+              <label for="gif-start">Start timestamp</label>
               <input type="text" id="gif-start" value="00:00:00">
             </div>
-            <div class="field-group">
-              <label>Duration (Seconds)</label>
+            <div class="field">
+              <label for="gif-dur">Duration · seconds</label>
               <input type="number" id="gif-dur" value="3" min="1" max="15">
             </div>
           </div>
-          <button class="btn-exec" id="btn-run-gif" disabled>Render High-Res GIF</button>
+
+          <button class="btn-exec" id="btn-run-gif" disabled>
+            Render high-res GIF
+            <em>2-pass palettegen</em>
+          </button>
         </div>
 
-        <!-- 11. FRAME GRABBER -->
+        <!-- 09 SYNC -->
+        <div id="tool-sync" class="panel">
+          <div class="panel-meta">
+            <span class="panel-idx">09</span>
+            <div>
+              <h2>Audio Desync Realignment</h2>
+              <p>Shifts a lagging or early audio track forward or backward using an input timestamp offset. Both streams are copied, so it stays lossless.</p>
+            </div>
+          </div>
+
+          <div class="dropzone" onclick="document.getElementById('sync-in').click()">
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select the desynced video</span>
+            <span class="drop-hint">Use a negative value to shift audio earlier</span>
+            <input type="file" id="sync-in" accept="video/*">
+            <div id="sync-tag" class="file-badge"></div>
+          </div>
+
+          <div class="field">
+            <label for="sync-offset">Audio offset · seconds</label>
+            <input type="number" id="sync-offset" step="0.1" value="1.0">
+          </div>
+
+          <button class="btn-exec" id="btn-run-sync" disabled>
+            Realign tracks
+            <em>-itsoffset</em>
+          </button>
+        </div>
+
+        <!-- 10 MUTE -->
+        <div id="tool-mute" class="panel">
+          <div class="panel-meta">
+            <span class="panel-idx">10</span>
+            <div>
+              <h2>Audio Stripper — Instant Mute</h2>
+              <p>Removes every audio stream from the container — background noise, dialogue and microphone alike — without touching a single video frame.</p>
+            </div>
+          </div>
+
+          <div class="dropzone" onclick="document.getElementById('mute-in').click()">
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select video file</span>
+            <span class="drop-hint">Output keeps the original video stream</span>
+            <input type="file" id="mute-in" accept="video/*">
+            <div id="mute-tag" class="file-badge"></div>
+          </div>
+
+          <button class="btn-exec" id="btn-run-mute" disabled>
+            Mute video, losslessly
+            <em>-an -c:v copy</em>
+          </button>
+        </div>
+
+        <!-- 11 SNAP -->
         <div id="tool-snap" class="panel">
           <div class="panel-meta">
-            <h2>High-Res Frame Grabber</h2>
-            <p>Captures full-resolution PNG posters at specific timestamps.</p>
+            <span class="panel-idx">11</span>
+            <div>
+              <h2>High-Res Frame Grabber</h2>
+              <p>Captures a full-resolution PNG poster at a precise timestamp — ideal for thumbnails, chapter art and video previews.</p>
+            </div>
           </div>
+
           <div class="dropzone" onclick="document.getElementById('snap-in').click()">
-            <span class="drop-title">Select Video File</span>
+            <div class="drop-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square">
+                <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
+              </svg>
+            </div>
+            <span class="drop-title">Select video file</span>
+            <span class="drop-hint">Output is a lossless PNG</span>
             <input type="file" id="snap-in" accept="video/*">
             <div id="snap-tag" class="file-badge"></div>
           </div>
-          <div class="field-group">
-            <label>Capture Timestamp (hh:mm:ss)</label>
+
+          <div class="field">
+            <label for="snap-time">Capture timestamp · hh:mm:ss</label>
             <input type="text" id="snap-time" value="00:00:05">
           </div>
-          <button class="btn-exec" id="btn-run-snap" disabled>Snap Poster Image</button>
+
+          <button class="btn-exec" id="btn-run-snap" disabled>
+            Snap poster image
+            <em>-vframes 1</em>
+          </button>
         </div>
 
-        <!-- Status Panel -->
-        <div class="status-panel">
+        <!-- Status -->
+        <div class="status">
           <div class="status-left">
-            <div class="status-dot" id="engine-dot"></div>
-            <span id="engine-msg">Initializing WebAssembly Core...</span>
+            <span class="status-dot" id="engine-dot"></span>
+            <span id="engine-msg">Initializing WebAssembly core…</span>
           </div>
-          <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;">100% In-Browser</span>
+          <span>100% in-browser · no network I/O during processing</span>
         </div>
 
       </div>
-    </main>
 
-    <!-- Global Footer -->
-    <footer>
-      <div class="footer-copy">
-        &copy; 2026 Osazuwa Matthew. All rights reserved.
-      </div>
-      <div class="footer-links">
-        <a class="footer-link" href="mailto:osazuwamatthewogbebor@gmail.com">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          osazuwamatthewogbebor@gmail.com
-        </a>
-        <a class="footer-link" href="https://wa.me/2348264776022" target="_blank" rel="noopener noreferrer">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          +234 826 477 6022
-        </a>
-      </div>
-    </footer>
-  </div>
+      <!-- Rail -->
+      <aside class="rail">
+        <div class="rail-block">
+          <h4>Local sandbox</h4>
+          <p><b>Your file never leaves this tab.</b> It's read into browser memory, processed by WebAssembly, and written back to your disk. There is no server on the other end of this.</p>
+        </div>
 
-  <!-- Dynamic Logic & WebAssembly Execution Engine -->
+        <div class="rail-block">
+          <h4>Getting the best results</h4>
+          <ul class="rail-list">
+            <li><span>Prefer the stream-copy engines — mux, trim, mute, sync. They finish in seconds with zero quality loss.</span></li>
+            <li><span>Re-encoding engines (compress, reframe, GIF) scale with clip length. Keep the tab open and let them run.</span></li>
+            <li><span>Probe first if an engine errors — the inspector reveals the actual container and codec.</span></li>
+          </ul>
+        </div>
+
+        <div class="rail-block">
+          <h4>Engine</h4>
+          <ul class="rail-list">
+            <li><span>FFmpeg compiled to WebAssembly, driven with the same flags as the CLI.</span></li>
+            <li><span>Autodetects multi-threading support and falls back gracefully when it's unavailable.</span></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="site-footer">
+    <div class="shell">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <button class="brand" onclick="navigateTo('landing')">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                <path d="M3 12h3l3-7 4 14 3-7h5"/>
+              </svg>
+            </span>
+            Vortex Studio<sup>&reg;</sup>
+          </button>
+          <p>A zero-cloud media engine. Eleven FFmpeg pipelines running entirely inside your browser — private by architecture, not by policy.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Studio</h4>
+          <ul>
+            <li><button onclick="openTool('tool-mux')">Mux tracks</button></li>
+            <li><button onclick="openTool('tool-trim')">Lossless trim</button></li>
+            <li><button onclick="openTool('tool-shrink')">Target compressor</button></li>
+            <li><button onclick="openTool('tool-reframe')">9:16 reframe</button></li>
+            <li><button onclick="openTool('tool-gif')">Palette GIF</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#engines">Engine index</a></li>
+            <li><a href="#workflow">Workflow</a></li>
+            <li><a href="#compare">Comparison</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:osazuwamatthewogbebor@gmail.com">osazuwamatthewogbebor@gmail.com</a></li>
+            <li><a href="https://wa.me/2348264776022" target="_blank" rel="noopener noreferrer">+234 826 477 6022</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="mono">&copy; 2026 Osazuwa Matthew</span>
+        <span class="mono">MIT licensed · No cookies · No tracking</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       LOGIC & WEBASSEMBLY ENGINE
+       ============================================================ -->
   <script type="module">
     import { FFmpeg } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
-    import { fetchFile } from 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js';
+    import { fetchFile, toBlobURL } from 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js';
 
     const ffmpeg = new FFmpeg();
     const engineDot = document.getElementById('engine-dot');
     const engineMsg = document.getElementById('engine-msg');
     let isReady = false;
 
-    // View Navigation Logic
-    window.navigateTo = function(targetView) {
+    /* ---------- View navigation ---------- */
+    window.navigateTo = function (targetView) {
       if (targetView === 'landing') {
         document.getElementById('landing-view').style.display = 'flex';
         document.getElementById('studio-view').style.display = 'none';
-        document.getElementById('btn-workspace-toggle').innerText = 'Launch Studio ⚡';
+        document.getElementById('btn-workspace-toggle').innerText = 'Open the studio';
+        requestAnimationFrame(revealInView);
       } else {
         document.getElementById('landing-view').style.display = 'none';
         document.getElementById('studio-view').style.display = 'flex';
-        document.getElementById('btn-workspace-toggle').innerText = 'Overview 🏠';
+        document.getElementById('btn-workspace-toggle').innerText = 'Overview';
+        requestAnimationFrame(updateTabFade);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.openTool = function(toolId) {
+    window.openTool = function (toolId) {
       navigateTo('studio');
       switchTool(toolId);
     };
 
-    window.switchTool = function(toolId) {
+    window.switchTool = function (toolId) {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.tool-tab').forEach(b => b.classList.remove('active'));
-      
+
       const panel = document.getElementById(toolId);
       if (panel) panel.classList.add('active');
 
       const tabs = Array.from(document.querySelectorAll('.tool-tab'));
-      const activeTab = tabs.find(t => t.getAttribute('onclick')?.includes(toolId));
-      if (activeTab) activeTab.classList.add('active');
+      const activeTab = tabs.find(t =>
+        t.dataset.tool === toolId || (t.getAttribute('onclick') || '').includes(toolId)
+      );
+      if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+      }
+      requestAnimationFrame(updateTabFade);
     };
 
-    // Theming Setup
+    /* ---------- Theme ---------- */
     const themeBtn = document.getElementById('theme-btn');
     const htmlEl = document.documentElement;
-    function toggleTheme() {
-      const current = htmlEl.getAttribute('data-theme');
-      const target = current === 'dark' ? 'light' : 'dark';
+    themeBtn.addEventListener('click', () => {
+      const target = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       htmlEl.setAttribute('data-theme', target);
       localStorage.setItem('theme', target);
-    }
+    });
     htmlEl.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
-    themeBtn.addEventListener('click', toggleTheme);
 
-    // Initialize FFmpeg Core (Single or Multi-Threaded depending on headers)
+    /* ---------- Waveform ----------
+       Deterministic pseudo-random with a loudness envelope, so it reads
+       like a real recording instead of noise. */
+    (function buildWaveform() {
+      const svg = document.getElementById('waveform');
+      if (!svg) return;
+      const BARS = 200;
+      const MAX = 47;
+      let seed = 987654321;
+      const rnd = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        return seed / 4294967296;
+      };
+
+      let out = '';
+      for (let i = 0; i < BARS; i++) {
+        const t = i / BARS;
+        // Speech-like envelope: phrases separated by pauses.
+        const phrase = Math.abs(Math.sin(t * Math.PI * 3.1)) ** 0.7;
+        const fade = Math.min(1, t * 9) * Math.min(1, (1 - t) * 9);
+        const amp = (0.18 + 0.82 * phrase * fade) * (0.5 + rnd() * 0.85);
+        const h = Math.max(1.2, Math.min(MAX, amp * MAX));
+        out += `<rect x="${(i + 0.18).toFixed(2)}" y="${(50 - h).toFixed(2)}" width="0.64" height="${(h * 2).toFixed(2)}"/>`;
+      }
+      svg.innerHTML = `<g fill="currentColor">${out}</g>`;
+    })();
+
+    /* ---------- Time ruler ---------- */
+    (function buildRuler() {
+      const ruler = document.getElementById('ruler');
+      if (!ruler) return;
+      const marks = ['0:00', '0:15', '0:30', '0:45', '1:00', '1:15', '1:30', '1:45', '2:00'];
+      ruler.innerHTML = marks
+        .map((m, i) => `<span class="${i % 2 === 0 ? 'major' : ''}">${m}</span>`)
+        .join('');
+    })();
+
+    /* ---------- Scroll progress ---------- */
+    (function scrollProgress() {
+      const bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      let queued = false;
+      function update() {
+        queued = false;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+        bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+      }
+      window.addEventListener('scroll', () => {
+        if (!queued) { queued = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+
+    /* ---------- Scroll reveal ---------- */
+    const reveals = Array.from(document.querySelectorAll('.reveal'));
+    let observer = null;
+
+    function revealInView() {
+      reveals.forEach(el => {
+        if (el.classList.contains('in')) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.94 && rect.bottom > 0) el.classList.add('in');
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      htmlEl.classList.add('js-reveal');
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.06, rootMargin: '0px 0px -4% 0px' });
+      reveals.forEach(el => observer.observe(el));
+      requestAnimationFrame(revealInView);
+    }
+
+    /* ---------- Counters ---------- */
+    const counters = document.querySelectorAll('[data-count]');
+    if ('IntersectionObserver' in window) {
+      const co = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          co.unobserve(el);
+          const target = parseInt(el.dataset.count, 10) || 0;
+          const start = performance.now();
+          (function tick(now) {
+            const p = Math.min((now - start) / 1000, 1);
+            el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = target;
+          })(start);
+        });
+      }, { threshold: 0.6 });
+      counters.forEach(el => co.observe(el));
+    } else {
+      counters.forEach(el => { el.textContent = el.dataset.count; });
+    }
+
+    /* ---------- Tab bar overflow fade ---------- */
+    const tabBar = document.getElementById('tool-tabs');
+    function updateTabFade() {
+      if (!tabBar) return;
+      const over = tabBar.scrollWidth > tabBar.clientWidth + 2;
+      const atEnd = tabBar.scrollLeft + tabBar.clientWidth >= tabBar.scrollWidth - 2;
+      tabBar.classList.toggle('fade-r', over && !atEnd);
+      tabBar.classList.toggle('fade-l', over && tabBar.scrollLeft > 2);
+    }
+    if (tabBar) {
+      tabBar.addEventListener('scroll', updateTabFade, { passive: true });
+      window.addEventListener('resize', updateTabFade);
+      updateTabFade();
+    }
+
+    /* ---------- FFmpeg bootstrap ----------
+
+       Loading FFmpeg.wasm straight from a CDN takes three deliberate steps,
+       because @ffmpeg/ffmpeg 0.12.x spawns its class worker with
+       `new Worker(new URL("./worker.js", import.meta.url), { type: "module" })`:
+
+       1. That URL resolves to the CDN, and a Worker cannot be constructed
+          cross-origin. It has to be re-hosted on our own origin.
+       2. Naively blob-ing worker.js breaks it: its first two statements are
+          `import ... from "./const.js"` and `"./errors.js"`, and a blob module
+          has no base URL, so both fail to resolve. The worker then never boots
+          and load() waits forever with no error. So we blob those two first
+          and rewrite worker.js to import them by their blob URLs.
+       3. `type: "module"` means importScripts is undefined inside the worker,
+          so it always takes the ESM branch and needs the ESM core, not the
+          UMD core that CORE_URL defaults to.
+
+       Getting any one of these wrong leaves the engine dead, so they're
+       commented rather than left as unexplained one-liners. */
+
+    const FF_ESM = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm';
+    const CORE_MT = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm';
+    const CORE_ST = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
+
+    async function toModuleBlob(url, rewrites = {}) {
+      const src = await (await fetch(url)).text();
+      let out = src;
+      for (const [from, to] of Object.entries(rewrites)) {
+        out = out.split(`"./${from}"`).join(`"${to}"`).split(`'./${from}'`).join(`'${to}'`);
+      }
+      return URL.createObjectURL(new Blob([out], { type: 'text/javascript' }));
+    }
+
+    async function buildClassWorkerURL() {
+      const [constURL, errorsURL] = await Promise.all([
+        toModuleBlob(`${FF_ESM}/const.js`),
+        toModuleBlob(`${FF_ESM}/errors.js`)
+      ]);
+      return toModuleBlob(`${FF_ESM}/worker.js`, { 'const.js': constURL, 'errors.js': errorsURL });
+    }
+
     async function initCore() {
       try {
         ffmpeg.on('log', ({ message }) => {
           console.log('[Vortex Core]', message);
-          if (document.getElementById('inspect-out').style.display === 'block') {
-            document.getElementById('inspect-out').innerText += message + '\n';
+          const outBox = document.getElementById('inspect-out');
+          if (outBox && outBox.style.display === 'block') {
+            outBox.innerText += message + '\n';
+            outBox.scrollTop = outBox.scrollHeight;
           }
         });
 
-        // Autodetect whether COOP/COEP headers are present
-        if (window.crossOriginIsolated) {
-          await ffmpeg.load(); // Multi-threaded full performance
-          engineMsg.innerText = 'Multi-Thread Engine Ready (High Performance)';
-        } else {
-          // Fallback to single-thread ESM build
-          const base = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
-          await ffmpeg.load({
-            coreURL: `${base}/ffmpeg-core.js`,
-            wasmURL: `${base}/ffmpeg-core.wasm`
-          });
-          engineMsg.innerText = 'Engine Active & Ready (Single-Thread Fallback)';
+        const multiThread = window.crossOriginIsolated;
+        const base = multiThread ? CORE_MT : CORE_ST;
+
+        const [classWorkerURL, coreURL, wasmURL] = await Promise.all([
+          buildClassWorkerURL(),
+          toBlobURL(`${base}/ffmpeg-core.js`, 'text/javascript'),
+          toBlobURL(`${base}/ffmpeg-core.wasm`, 'application/wasm')
+        ]);
+
+        const config = { classWorkerURL, coreURL, wasmURL };
+        if (multiThread) {
+          config.workerURL = await toBlobURL(`${CORE_MT}/ffmpeg-core.worker.js`, 'text/javascript');
         }
 
+        await ffmpeg.load(config);
+
         engineDot.className = 'status-dot ready';
+        engineMsg.innerText = multiThread
+          ? 'Multi-thread engine ready (high performance)'
+          : 'Engine active & ready (single-thread fallback)';
         isReady = true;
+        refreshDropzones();
       } catch (err) {
         engineDot.className = 'status-dot';
-        engineMsg.innerText = 'Engine Initialization Error';
+        engineMsg.innerText = 'Engine initialization error — check your connection and reload.';
         console.error(err);
       }
     }
     initCore();
 
-    // Universal Dropzone Connector
+    /* ---------- Dropzones ---------- */
+    const dropzoneChecks = [];
+
     function bindDropzone(inputId, tagId, buttonId, secondaryId = null) {
       const el = document.getElementById(inputId);
       const tag = document.getElementById(tagId);
       const btn = document.getElementById(buttonId);
+      const zone = el.closest('.dropzone');
+
+      const hasSecondary = () =>
+        !secondaryId || document.getElementById(secondaryId).files.length > 0;
+
+      const refresh = () => {
+        btn.disabled = !(isReady && el.files.length > 0 && hasSecondary());
+      };
 
       el.addEventListener('change', () => {
         if (el.files.length > 0) {
           tag.style.display = 'inline-block';
           tag.innerText = el.files[0].name;
-          if (isReady && (!secondaryId || document.getElementById(secondaryId).files.length > 0)) {
-            btn.disabled = false;
-          }
+          if (zone) zone.classList.add('is-loaded');
+        } else if (zone) {
+          zone.classList.remove('is-loaded');
+          tag.style.display = 'none';
         }
+        refresh();
       });
+
+      dropzoneChecks.push(refresh);
+    }
+
+    /* The engine takes a few seconds to arrive. A file chosen before it lands
+       would otherwise leave its button disabled forever, so every dropzone is
+       re-evaluated once initCore() resolves. */
+    function refreshDropzones() {
+      dropzoneChecks.forEach(fn => fn());
     }
 
     bindDropzone('mux-v-in', 'mux-v-tag', 'btn-run-mux', 'mux-a-in');
@@ -1006,15 +2734,15 @@
     bindDropzone('inspect-in', 'inspect-tag', 'btn-run-inspect');
     bindDropzone('trim-in', 'trim-tag', 'btn-run-trim');
     bindDropzone('extract-in', 'extract-tag', 'btn-run-extract');
-    bindDropzone('mute-in', 'mute-tag', 'btn-run-mute');
-    bindDropzone('vol-in', 'vol-tag', 'btn-run-vol');
-    bindDropzone('reframe-in', 'reframe-tag', 'btn-run-reframe');
     bindDropzone('shrink-in', 'shrink-tag', 'btn-run-shrink');
-    bindDropzone('sync-in', 'sync-tag', 'btn-run-sync');
+    bindDropzone('reframe-in', 'reframe-tag', 'btn-run-reframe');
+    bindDropzone('vol-in', 'vol-tag', 'btn-run-vol');
     bindDropzone('gif-in', 'gif-tag', 'btn-run-gif');
+    bindDropzone('sync-in', 'sync-tag', 'btn-run-sync');
+    bindDropzone('mute-in', 'mute-tag', 'btn-run-mute');
     bindDropzone('snap-in', 'snap-tag', 'btn-run-snap');
 
-    // Universal Buffer Downloader
+    /* ---------- Helpers ---------- */
     async function triggerClientDownload(wasmFile, outputName, mime) {
       const data = await ffmpeg.readFile(wasmFile);
       const blob = new Blob([data.buffer], { type: mime });
@@ -1025,146 +2753,173 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
     }
 
     function setBusy(msg) {
       engineDot.className = 'status-dot busy';
       engineMsg.innerText = msg;
     }
-
     function setDone(msg) {
       engineDot.className = 'status-dot ready';
-      engineMsg.innerText = msg || 'Execution Complete!';
+      engineMsg.innerText = msg || 'Execution complete.';
+    }
+    function setError(err) {
+      engineDot.className = 'status-dot';
+      engineMsg.innerText = 'Engine error — see the browser console.';
+      console.error(err);
     }
 
-    // 1. MUX
+    /* ---------- 01 MUX ---------- */
     document.getElementById('btn-run-mux').addEventListener('click', async () => {
-      setBusy('Muxing audio & video streams...');
-      const v = document.getElementById('mux-v-in').files[0];
-      const a = document.getElementById('mux-a-in').files[0];
-      await ffmpeg.writeFile('mv.mp4', await fetchFile(v));
-      await ffmpeg.writeFile('ma.dat', await fetchFile(a));
-      await ffmpeg.exec(['-i', 'mv.mp4', '-i', 'ma.dat', '-c:v', 'copy', '-c:a', 'aac', 'mux_out.mp4']);
-      await triggerClientDownload('mux_out.mp4', `muxed_${v.name}`, 'video/mp4');
-      setDone();
+      setBusy('Muxing audio & video streams…');
+      try {
+        const v = document.getElementById('mux-v-in').files[0];
+        const a = document.getElementById('mux-a-in').files[0];
+        await ffmpeg.writeFile('mv.mp4', await fetchFile(v));
+        await ffmpeg.writeFile('ma.dat', await fetchFile(a));
+        await ffmpeg.exec(['-i', 'mv.mp4', '-i', 'ma.dat', '-c:v', 'copy', '-c:a', 'aac', 'mux_out.mp4']);
+        await triggerClientDownload('mux_out.mp4', `muxed_${v.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 2. INSPECT (ffprobe emulation via ffmpeg inspect)
+    /* ---------- 02 INSPECT ---------- */
     document.getElementById('btn-run-inspect').addEventListener('click', async () => {
       const outBox = document.getElementById('inspect-out');
       outBox.style.display = 'block';
-      outBox.innerText = 'Inspecting bitstream packets...\n';
-      const f = document.getElementById('inspect-in').files[0];
-      await ffmpeg.writeFile('probe.dat', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'probe.dat']);
-      setDone('Inspection finished. Check terminal output above.');
+      outBox.innerText = 'Inspecting bitstream packets…\n';
+      try {
+        const f = document.getElementById('inspect-in').files[0];
+        await ffmpeg.writeFile('probe.dat', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'probe.dat']);
+        setDone('Inspection finished — output above.');
+      } catch (err) { setError(err); }
     });
 
-    // 3. TRIM
+    /* ---------- 03 TRIM ---------- */
     document.getElementById('btn-run-trim').addEventListener('click', async () => {
-      setBusy('Cutting segment via stream copy...');
-      const f = document.getElementById('trim-in').files[0];
-      const s = document.getElementById('trim-start').value;
-      const e = document.getElementById('trim-end').value;
-      await ffmpeg.writeFile('tr.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-ss', s, '-to', e, '-i', 'tr.mp4', '-c', 'copy', 'trim_out.mp4']);
-      await triggerClientDownload('trim_out.mp4', `cut_${f.name}`, 'video/mp4');
-      setDone();
+      setBusy('Cutting segment via stream copy…');
+      try {
+        const f = document.getElementById('trim-in').files[0];
+        const s = document.getElementById('trim-start').value;
+        const e = document.getElementById('trim-end').value;
+        await ffmpeg.writeFile('tr.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-ss', s, '-to', e, '-i', 'tr.mp4', '-c', 'copy', 'trim_out.mp4']);
+        await triggerClientDownload('trim_out.mp4', `cut_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 4. EXTRACT AUDIO
+    /* ---------- 04 EXTRACT AUDIO ---------- */
     document.getElementById('btn-run-extract').addEventListener('click', async () => {
-      setBusy('Extracting audio stream...');
-      const f = document.getElementById('extract-in').files[0];
-      const fmt = document.getElementById('extract-format').value;
-      await ffmpeg.writeFile('ex.mp4', await fetchFile(f));
-      if (fmt === 'mp3') {
-        await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'libmp3lame', '-q:a', '2', 'sound.mp3']);
-        await triggerClientDownload('sound.mp3', `${f.name}.mp3`, 'audio/mp3');
-      } else {
-        await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'copy', 'sound.m4a']);
-        await triggerClientDownload('sound.m4a', `${f.name}.m4a`, 'audio/mp4');
-      }
-      setDone();
+      setBusy('Extracting audio stream…');
+      try {
+        const f = document.getElementById('extract-in').files[0];
+        const fmt = document.getElementById('extract-format').value;
+        await ffmpeg.writeFile('ex.mp4', await fetchFile(f));
+        if (fmt === 'mp3') {
+          await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'libmp3lame', '-q:a', '2', 'sound.mp3']);
+          await triggerClientDownload('sound.mp3', `${f.name}.mp3`, 'audio/mp3');
+        } else {
+          await ffmpeg.exec(['-i', 'ex.mp4', '-vn', '-c:a', 'copy', 'sound.m4a']);
+          await triggerClientDownload('sound.m4a', `${f.name}.m4a`, 'audio/mp4');
+        }
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 5. MUTE
-    document.getElementById('btn-run-mute').addEventListener('click', async () => {
-      setBusy('Stripping audio stream...');
-      const f = document.getElementById('mute-in').files[0];
-      await ffmpeg.writeFile('mu.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'mu.mp4', '-an', '-c:v', 'copy', 'muted.mp4']);
-      await triggerClientDownload('muted.mp4', `muted_${f.name}`, 'video/mp4');
-      setDone();
-    });
-
-    // 6. VOLUME BOOST
-    document.getElementById('btn-run-vol').addEventListener('click', async () => {
-      setBusy('Amplifying audio levels...');
-      const f = document.getElementById('vol-in').files[0];
-      const mult = document.getElementById('vol-mult').value;
-      await ffmpeg.writeFile('vo.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'vo.mp4', '-c:v', 'copy', '-af', `volume=${mult}`, 'boosted.mp4']);
-      await triggerClientDownload('boosted.mp4', `boosted_${f.name}`, 'video/mp4');
-      setDone();
-    });
-
-    // 7. REFRAME 9:16
-    document.getElementById('btn-run-reframe').addEventListener('click', async () => {
-      setBusy('Rendering 9:16 vertical crop (calculating frames)...');
-      const f = document.getElementById('reframe-in').files[0];
-      await ffmpeg.writeFile('rf.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'rf.mp4', '-vf', 'crop=ih*(9/16):ih', '-c:a', 'copy', 'vertical.mp4']);
-      await triggerClientDownload('vertical.mp4', `shorts_${f.name}`, 'video/mp4');
-      setDone();
-    });
-
-    // 8. TARGET SHRINK
+    /* ---------- 05 TARGET SHRINK ---------- */
     document.getElementById('btn-run-shrink').addEventListener('click', async () => {
-      setBusy('Calculating optimal bitrate & compressing...');
-      const f = document.getElementById('shrink-in').files[0];
-      const mb = parseInt(document.getElementById('shrink-target').value);
-      const targetBitrate = Math.max(250, Math.floor((mb * 8192) / 120) - 128);
-      await ffmpeg.writeFile('sh.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'sh.mp4', '-b:v', `${targetBitrate}k`, '-c:v', 'libx264', '-c:a', 'aac', '-b:a', '128k', 'shrunk.mp4']);
-      await triggerClientDownload('shrunk.mp4', `compressed_${f.name}`, 'video/mp4');
-      setDone();
+      setBusy('Calculating optimal bitrate & compressing…');
+      try {
+        const f = document.getElementById('shrink-in').files[0];
+        const mb = parseInt(document.getElementById('shrink-target').value, 10);
+        const targetBitrate = Math.max(250, Math.floor((mb * 8192) / 120) - 128);
+        await ffmpeg.writeFile('sh.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'sh.mp4', '-b:v', `${targetBitrate}k`, '-c:v', 'libx264', '-c:a', 'aac', '-b:a', '128k', 'shrunk.mp4']);
+        await triggerClientDownload('shrunk.mp4', `compressed_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 9. FIX DESYNC
-    document.getElementById('btn-run-sync').addEventListener('click', async () => {
-      setBusy('Realigning track offsets...');
-      const f = document.getElementById('sync-in').files[0];
-      const offset = document.getElementById('sync-offset').value;
-      await ffmpeg.writeFile('sy.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-i', 'sy.mp4', '-itsoffset', offset, '-i', 'sy.mp4', '-map', '0:v', '-map', '1:a', '-c', 'copy', 'synced.mp4']);
-      await triggerClientDownload('synced.mp4', `synced_${f.name}`, 'video/mp4');
-      setDone();
+    /* ---------- 06 REFRAME 9:16 ---------- */
+    document.getElementById('btn-run-reframe').addEventListener('click', async () => {
+      setBusy('Rendering 9:16 vertical crop…');
+      try {
+        const f = document.getElementById('reframe-in').files[0];
+        await ffmpeg.writeFile('rf.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'rf.mp4', '-vf', 'crop=ih*(9/16):ih', '-c:a', 'copy', 'vertical.mp4']);
+        await triggerClientDownload('vertical.mp4', `shorts_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 10. PALETTE GIF
+    /* ---------- 07 VOLUME BOOST ---------- */
+    document.getElementById('btn-run-vol').addEventListener('click', async () => {
+      setBusy('Amplifying audio levels…');
+      try {
+        const f = document.getElementById('vol-in').files[0];
+        const mult = document.getElementById('vol-mult').value;
+        await ffmpeg.writeFile('vo.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'vo.mp4', '-c:v', 'copy', '-af', `volume=${mult}`, 'boosted.mp4']);
+        await triggerClientDownload('boosted.mp4', `boosted_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
+    });
+
+    /* ---------- 08 PALETTE GIF ---------- */
     document.getElementById('btn-run-gif').addEventListener('click', async () => {
-      setBusy('Pass 1: Analyzing custom color distribution...');
-      const f = document.getElementById('gif-in').files[0];
-      const s = document.getElementById('gif-start').value;
-      const d = document.getElementById('gif-dur').value;
-      await ffmpeg.writeFile('g.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-vf', 'fps=12,scale=480:-1:flags=lanczos,palettegen', 'pal.png']);
-      setBusy('Pass 2: Mapping pixel matrix...');
-      await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-i', 'pal.png', '-filter_complex', 'fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse', 'out.gif']);
-      await triggerClientDownload('out.gif', `loop_${Date.now()}.gif`, 'image/gif');
-      setDone();
+      setBusy('Pass 1 — analysing colour distribution…');
+      try {
+        const f = document.getElementById('gif-in').files[0];
+        const s = document.getElementById('gif-start').value;
+        const d = document.getElementById('gif-dur').value;
+        await ffmpeg.writeFile('g.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-vf', 'fps=12,scale=480:-1:flags=lanczos,palettegen', 'pal.png']);
+        setBusy('Pass 2 — mapping pixel matrix…');
+        await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-i', 'pal.png', '-filter_complex', 'fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse', 'out.gif']);
+        await triggerClientDownload('out.gif', `loop_${Date.now()}.gif`, 'image/gif');
+        setDone();
+      } catch (err) { setError(err); }
     });
 
-    // 11. FRAME GRABBER
+    /* ---------- 09 FIX DESYNC ---------- */
+    document.getElementById('btn-run-sync').addEventListener('click', async () => {
+      setBusy('Realigning track offsets…');
+      try {
+        const f = document.getElementById('sync-in').files[0];
+        const offset = document.getElementById('sync-offset').value;
+        await ffmpeg.writeFile('sy.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'sy.mp4', '-itsoffset', offset, '-i', 'sy.mp4', '-map', '0:v', '-map', '1:a', '-c', 'copy', 'synced.mp4']);
+        await triggerClientDownload('synced.mp4', `synced_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
+    });
+
+    /* ---------- 10 MUTE ---------- */
+    document.getElementById('btn-run-mute').addEventListener('click', async () => {
+      setBusy('Stripping audio stream…');
+      try {
+        const f = document.getElementById('mute-in').files[0];
+        await ffmpeg.writeFile('mu.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-i', 'mu.mp4', '-an', '-c:v', 'copy', 'muted.mp4']);
+        await triggerClientDownload('muted.mp4', `muted_${f.name}`, 'video/mp4');
+        setDone();
+      } catch (err) { setError(err); }
+    });
+
+    /* ---------- 11 FRAME GRABBER ---------- */
     document.getElementById('btn-run-snap').addEventListener('click', async () => {
-      setBusy('Capturing poster frame...');
-      const f = document.getElementById('snap-in').files[0];
-      const t = document.getElementById('snap-time').value;
-      await ffmpeg.writeFile('sn.mp4', await fetchFile(f));
-      await ffmpeg.exec(['-ss', t, '-i', 'sn.mp4', '-vframes', '1', '-q:v', '2', 'snap.png']);
-      await triggerClientDownload('snap.png', `poster_${Date.now()}.png`, 'image/png');
-      setDone();
+      setBusy('Capturing poster frame…');
+      try {
+        const f = document.getElementById('snap-in').files[0];
+        const t = document.getElementById('snap-time').value;
+        await ffmpeg.writeFile('sn.mp4', await fetchFile(f));
+        await ffmpeg.exec(['-ss', t, '-i', 'sn.mp4', '-vframes', '1', '-q:v', '2', 'snap.png']);
+        await triggerClientDownload('snap.png', `poster_${Date.now()}.png`, 'image/png');
+        setDone();
+      } catch (err) { setError(err); }
     });
   </script>
 </body>
