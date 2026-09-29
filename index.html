@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vortex Studio — Edit video &amp; audio without the upload</title>
-  <meta name="description" content="Eleven FFmpeg engines compiled to WebAssembly, running in your browser's own memory. Mux, trim, compress, reframe and inspect media with nothing ever uploaded.">
+  <meta name="description" content="Eleven studio-grade tools that run right in your browser. Trim, compress, convert and fix your videos and audio — with nothing ever uploaded.">
   <meta name="theme-color" content="#0A0A0B">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23D7FB4E'/%3E%3Cpath d='M3 12h3l3-7 4 14 3-7h5' fill='none' stroke='%230A0A0B' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,8 +34,8 @@
 
       --accent:    #D7FB4E;
       --accent-ink:#0A0A0B;
-      --accent-dim:rgba(215, 251, 78, 0.14);
-      --accent-line:rgba(215, 251, 78, 0.34);
+      --accent-dim:rgba(215, 251, 78, 0.09);
+      --accent-line:rgba(215, 251, 78, 0.42);
 
       --ok:        #7BE495;
 
@@ -1396,13 +1397,13 @@
       </button>
 
       <nav class="nav" aria-label="Sections">
-        <a href="#engines">Engines</a>
+        <a href="#engines">The tools</a>
         <a href="#workflow">Workflow</a>
         <a href="#compare">Compare</a>
         <a href="#faq">FAQ</a>
       </nav>
 
-      <span class="header-meta">v11 engines &nbsp;/&nbsp; wasm &nbsp;/&nbsp; 0 uploads</span>
+      <span class="header-meta">11 tools &nbsp;/&nbsp; no install &nbsp;/&nbsp; 0 uploads</span>
 
       <div class="header-actions">
         <button class="btn" id="btn-workspace-toggle" onclick="navigateTo('studio')">Open the studio</button>
@@ -1426,7 +1427,7 @@
           <div class="hero-copy">
             <div class="hero-eyebrow">
               <span class="dot" aria-hidden="true"></span>
-              <span class="mono">FFmpeg.wasm build 0.12.10 &nbsp;·&nbsp; running locally</span>
+              <span class="mono">Runs on your device &nbsp;·&nbsp; nothing is uploaded</span>
             </div>
 
             <h1 class="hero-title">
@@ -1435,8 +1436,8 @@
             </h1>
 
             <p class="hero-desc">
-              Eleven FFmpeg engines compiled to WebAssembly and running inside your browser's own memory.
-              Mux, trim, compress, reframe and probe your media — with <b>nothing ever sent to a server</b>.
+              Eleven studio-grade tools that open right here in your browser. Trim, compress, convert,
+              fix and save your videos and audio — with <b>nothing ever sent to a server</b>.
             </p>
 
             <div class="hero-actions">
@@ -1445,7 +1446,7 @@
                 Open the studio
               </button>
               <a class="link" href="#engines">
-                See the eleven engines
+                See all eleven tools
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </a>
             </div>
@@ -1453,20 +1454,20 @@
 
           <dl class="spec">
             <div class="spec-row">
-              <dt>Engine</dt>
-              <dd>FFmpeg 6.1 → WebAssembly<small>Identical CLI flags, no wrapper API</small></dd>
+              <dt>Where it runs</dt>
+              <dd>On your own device<small>Your file is never uploaded anywhere</small></dd>
             </div>
             <div class="spec-row">
-              <dt>Threading</dt>
-              <dd>Multi-core when isolated<small>Silent single-thread fallback otherwise</small></dd>
+              <dt>What you need</dt>
+              <dd>Just a web browser<small>No install, no account, no sign-up</small></dd>
             </div>
             <div class="spec-row">
-              <dt>File I/O</dt>
-              <dd>In-memory only<small>No multipart upload, no temp bucket</small></dd>
+              <dt>How fast</dt>
+              <dd>Seconds, not minutes<small>Most jobs finish before an upload would</small></dd>
             </div>
             <div class="spec-row">
-              <dt>Account</dt>
-              <dd>Not required<small>No cookies, no tracking, no email gate</small></dd>
+              <dt>What it costs</dt>
+              <dd>Free, with no limits<small>No credits, no watermarks, no file caps</small></dd>
             </div>
           </dl>
         </div>
@@ -1477,10 +1478,10 @@
         <div class="deck">
           <div class="deck-frame">
             <div class="deck-bar">
-              <span class="deck-lamp">ENGINE READY</span>
+              <span class="deck-lamp">READY</span>
               <span class="mono">lecture_recording.mp4</span>
               <span class="spacer"></span>
-              <span class="mono" id="deck-mode">STEREO · 44 100 HZ · 32-BIT FLOAT</span>
+              <span class="mono" id="deck-mode">ORIGINAL QUALITY KEPT · NOTHING UPLOADED</span>
             </div>
 
             <div class="ruler" id="ruler" aria-hidden="true"></div>
@@ -1490,15 +1491,15 @@
               <div class="wave-select" style="left:26.5%; width:16.5%">
                 <span class="wave-select-tag">SELECTION · 00:44</span>
               </div>
-              <div class="wave-head" style="left:43%"></div>
+              <div class="wave-head" style="left:58%"></div>
             </div>
 
             <div class="deck-foot">
-              <span class="mono">AUDIO TRACK</span>
-              <span class="mono">MUTE —</span>
-              <span class="mono">SOLO —</span>
+              <span class="mono">Your file</span>
+              <span class="mono">Trim — instant</span>
+              <span class="mono">Compress — takes a while</span>
               <span class="spacer"></span>
-              <span class="mono">L&nbsp;&nbsp;&nbsp;&nbsp;R</span>
+              <span class="mono">0 bytes uploaded</span>
             </div>
           </div>
         </div>
@@ -1508,8 +1509,8 @@
     <!-- ---------- FORMAT STRIP ---------- -->
     <div class="formats" aria-hidden="true">
       <div class="formats-track">
-        <span>H.264</span><span>HEVC</span><span>AV1</span><span>VP9</span><span>AAC</span><span>MP3</span><span>Opus</span><span>FLAC</span><span>MP4</span><span>WebM</span><span>MKV</span><span>MOV</span><span>palettegen</span><span>lanczos</span><span>libx264</span><span>SharedArrayBuffer</span>
-        <span>H.264</span><span>HEVC</span><span>AV1</span><span>VP9</span><span>AAC</span><span>MP3</span><span>Opus</span><span>FLAC</span><span>MP4</span><span>WebM</span><span>MKV</span><span>MOV</span><span>palettegen</span><span>lanczos</span><span>libx264</span><span>SharedArrayBuffer</span>
+        <span>MP4</span><span>MOV</span><span>WebM</span><span>MKV</span><span>AVI</span><span>MP3</span><span>M4A</span><span>WAV</span><span>AAC</span><span>FLAC</span><span>OGG</span><span>GIF</span><span>PNG</span><span>JPG</span><span>Full HD &amp; 4K</span><span>Any length</span>
+        <span>MP4</span><span>MOV</span><span>WebM</span><span>MKV</span><span>AVI</span><span>MP3</span><span>M4A</span><span>WAV</span><span>AAC</span><span>FLAC</span><span>OGG</span><span>GIF</span><span>PNG</span><span>JPG</span><span>Full HD &amp; 4K</span><span>Any length</span>
       </div>
     </div>
 
@@ -1518,9 +1519,9 @@
       <div class="shell">
         <div class="numbers">
           <div class="number reveal">
-            <span class="mono">Engines</span>
+            <span class="mono">Tools</span>
             <b><span data-count="11">0</span></b>
-            <p>Mux, trim, compress, reframe, probe, capture — one page.</p>
+            <p>Trim, compress, convert, fix and save — all on one page.</p>
           </div>
           <div class="number reveal" style="--d:70ms">
             <span class="mono">Bytes uploaded</span>
@@ -1528,14 +1529,14 @@
             <p>Your file is read into the tab and never leaves it.</p>
           </div>
           <div class="number reveal" style="--d:140ms">
-            <span class="mono">On-device</span>
+            <span class="mono">Stays on your device</span>
             <b><span data-count="100">0</span>%</b>
             <p>No queue, no upload bar, no waiting room.</p>
           </div>
           <div class="number reveal" style="--d:210ms">
-            <span class="mono">Size ceiling</span>
-            <b>∞</b>
-            <p>Bounded by your RAM, not by a pricing tier.</p>
+            <span class="mono">File-size limit</span>
+            <b>None</b>
+            <p>No upload caps, and no paid tiers to unlock.</p>
           </div>
         </div>
       </div>
@@ -1550,7 +1551,7 @@
             <h2 class="section-title">Three steps, and <em>no waiting room.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
-            Everything happens in the tab you already have open. There is no server-side queue to sit in and nothing left behind to clean up afterwards.
+            Everything happens in the browser tab you already have open. There's nothing to upload, no queue to wait in, and nothing left behind afterwards.
           </p>
         </div>
 
@@ -1558,17 +1559,17 @@
           <article class="step reveal">
             <span class="step-idx">01</span>
             <h3>Drop a file</h3>
-            <p>The browser reads it straight into memory. No multipart upload, no progress bar crawling toward a data centre on another continent.</p>
+            <p>Your browser opens it directly — there's no upload step at all. No progress bar crawling toward a data centre on another continent.</p>
           </article>
           <article class="step reveal" style="--d:90ms">
             <span class="step-idx">02</span>
-            <h3>Pick an engine</h3>
-            <p>Eleven pre-tuned FFmpeg recipes — stream copy where quality matters, x264 where file size does. Sensible defaults on every field.</p>
+            <h3>Pick a tool</h3>
+            <p>Eleven ready-made tools, each already set up with the right settings. Where quality matters it keeps your original; where size matters it compresses.</p>
           </article>
           <article class="step reveal" style="--d:180ms">
             <span class="step-idx">03</span>
             <h3>Save the result</h3>
-            <p>The output buffer is handed back to your disk as a Blob. No watermark, no email gate, no link that expires in 24 hours.</p>
+            <p>The finished file saves straight to your device. No watermark, no email gate, and no link that expires in 24 hours.</p>
           </article>
         </div>
       </div>
@@ -1579,11 +1580,11 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">02 — Engine index</span>
+            <span class="mono">02 — The tools</span>
             <h2 class="section-title">Eleven tools that used to <em>need a desktop app.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
-            Each entry is a purpose-built FFmpeg pipeline. Pick one to open it directly in the studio, or switch between all of them once you're there.
+            Each one opens straight in the studio. Pick any of them to start, and switch between them whenever you like.
           </p>
         </div>
 
@@ -1591,8 +1592,8 @@
           <button class="engine reveal" onclick="openTool('tool-mux')">
             <span class="engine-idx">01</span>
             <span>
-              <span class="engine-name">Audio &amp; Video Muxer <code>-c:v copy</code></span>
-              <span class="engine-desc">Fuses a standalone high-resolution video stream with an external audio track into one MP4. The video bitstream is copied byte-for-byte, so nothing is re-encoded.</span>
+              <span class="engine-name">Combine video &amp; audio <code>Instant</code></span>
+              <span class="engine-desc">Put a video and a separate audio track together into one file. Perfect when you've downloaded a video and have a better-quality recording of the same thing — the picture stays exactly as it was.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1600,8 +1601,8 @@
           <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-inspect')">
             <span class="engine-idx">02</span>
             <span>
-              <span class="engine-name">Stream Inspector <code>ffprobe</code></span>
-              <span class="engine-desc">Read container specs, codecs, pixel formats, sample rates and bitrates without installing MediaInfo on a locked-down machine.</span>
+              <span class="engine-name">Check what's inside a file <code>Instant</code></span>
+              <span class="engine-desc">See exactly what a video or audio file contains — how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1609,8 +1610,8 @@
           <button class="engine reveal" onclick="openTool('tool-trim')">
             <span class="engine-idx">03</span>
             <span>
-              <span class="engine-name">Lossless Stream Trimmer <code>-c copy</code></span>
-              <span class="engine-desc">Slice an exact segment out of a 10 GB lecture in about a second. Keyframe-accurate, zero re-encoding, zero generation loss.</span>
+              <span class="engine-name">Trim a clip <code>Instant</code></span>
+              <span class="engine-desc">Cut out just the part you need. Even a three-hour recording takes only seconds, and the picture and sound quality stay exactly as they were.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1618,8 +1619,8 @@
           <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-extract')">
             <span class="engine-idx">04</span>
             <span>
-              <span class="engine-name">Audio Extractor <code>libmp3lame</code></span>
-              <span class="engine-desc">Rip the soundtrack out as a 192 kbps MP3, or copy the original AAC stream into M4A instantly for Whisper transcription.</span>
+              <span class="engine-name">Save the audio on its own <code>Usually quick</code></span>
+              <span class="engine-desc">Pull the sound out of a video as an MP3 or M4A — for listening offline, or for feeding into a transcription tool.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1627,8 +1628,8 @@
           <button class="engine reveal" onclick="openTool('tool-shrink')">
             <span class="engine-idx">05</span>
             <span>
-              <span class="engine-name">Target Size Compressor <code>-b:v</code></span>
-              <span class="engine-desc">Hit an exact ceiling — Discord's 25 MB, WhatsApp's 16 MB — by computing the bitrate budget up front instead of guessing at a quality slider.</span>
+              <span class="engine-name">Shrink a video to a size limit <code>Takes a while</code></span>
+              <span class="engine-desc">Tell it the size you need — 25 MB for Discord, 16 MB for WhatsApp — and it works out how to fit your video inside it.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1636,8 +1637,8 @@
           <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-reframe')">
             <span class="engine-idx">06</span>
             <span>
-              <span class="engine-name">9:16 Vertical Re-framer <code>crop</code></span>
-              <span class="engine-desc">Centre-crop widescreen 16:9 footage into vertical frames for YouTube Shorts, Instagram Reels and TikTok.</span>
+              <span class="engine-name">Make a video vertical <code>Takes a while</code></span>
+              <span class="engine-desc">Turn widescreen footage into the tall format used by Reels, Shorts and TikTok, cropping neatly to the middle of the picture.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1645,8 +1646,8 @@
           <button class="engine reveal" onclick="openTool('tool-volume')">
             <span class="engine-idx">07</span>
             <span>
-              <span class="engine-name">Volume Booster <code>volume=3.0</code></span>
-              <span class="engine-desc">Lift quiet Zoom and Google Meet recordings up to 300%. The audio is filtered while the video stream is copied untouched.</span>
+              <span class="engine-name">Boost quiet audio <code>Usually quick</code></span>
+              <span class="engine-desc">Make a recording louder when the microphone was too far away or the volume was turned down. The picture is left exactly as it is.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1654,8 +1655,8 @@
           <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-gif')">
             <span class="engine-idx">08</span>
             <span>
-              <span class="engine-name">2-Pass Palette GIF <code>palettegen</code></span>
-              <span class="engine-desc">Samples the clip's real colour distribution into a custom 256-colour palette, then maps every frame back through it. Smooth gradients, no banding.</span>
+              <span class="engine-name">Make a smooth GIF <code>Takes a while</code></span>
+              <span class="engine-desc">Turn a short moment into a looping GIF that keeps its colours clean and smooth, instead of the blotchy, faded look most converters give you.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1663,8 +1664,8 @@
           <button class="engine reveal" onclick="openTool('tool-sync')">
             <span class="engine-idx">09</span>
             <span>
-              <span class="engine-name">Desync Realignment <code>-itsoffset</code></span>
-              <span class="engine-desc">Nudge a lagging or early audio track forward or backward with a non-destructive input timestamp offset. Both streams are copied.</span>
+              <span class="engine-name">Fix audio that's out of sync <code>Instant</code></span>
+              <span class="engine-desc">When the sound drifts ahead of or behind the picture, nudge it back into line. The quality is left untouched.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1672,8 +1673,8 @@
           <button class="engine reveal" style="--d:60ms" onclick="openTool('tool-mute')">
             <span class="engine-idx">10</span>
             <span>
-              <span class="engine-name">Instant Muter <code>-an</code></span>
-              <span class="engine-desc">Strip every audio stream out of the container without touching a single video frame. Finishes in well under a second.</span>
+              <span class="engine-name">Remove the sound <code>Instant</code></span>
+              <span class="engine-desc">Take the audio off a video completely — for background footage, for muting a recording, or when you only need the picture.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1681,8 +1682,8 @@
           <button class="engine reveal" onclick="openTool('tool-snap')">
             <span class="engine-idx">11</span>
             <span>
-              <span class="engine-name">Frame Grabber <code>-vframes 1</code></span>
-              <span class="engine-desc">Capture a full-resolution PNG poster at any precise timestamp — for thumbnails, chapter art and video previews.</span>
+              <span class="engine-name">Save a still frame <code>Instant</code></span>
+              <span class="engine-desc">Grab a single, full-quality image from any moment in a video. Ideal for thumbnails, previews and chapter images.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1690,8 +1691,8 @@
           <div class="engine" style="cursor:default;border-bottom:1px solid var(--line)">
             <span class="engine-idx">—</span>
             <span>
-              <span class="engine-name">All eleven, one workspace</span>
-              <span class="engine-desc">Switch between every engine without reloading or losing the page state.</span>
+              <span class="engine-name">All eleven in one place</span>
+              <span class="engine-desc">Switch between any of them without reloading the page or losing your place.</span>
             </span>
             <span></span>
           </div>
@@ -1704,38 +1705,36 @@
       <div class="shell">
         <div class="showcase">
           <div class="reveal">
-            <span class="mono" style="display:block;margin-bottom:1.25rem;">03 — Under the hood</span>
-            <h2 class="section-title" style="margin-bottom:1.1rem;">Real FFmpeg. Real flags. <em>No abstraction tax.</em></h2>
+            <span class="mono" style="display:block;margin-bottom:1.25rem;">03 — Why it's better</span>
+            <h2 class="section-title" style="margin-bottom:1.1rem;">It works the way <em>you'd expect.</em></h2>
             <p class="section-note">
-              Vortex doesn't wrap a proprietary transcoding API and call it a day. It ships the actual FFmpeg binary compiled to WebAssembly and drives it with the same command-line flags you'd type in a terminal.
+              Most online converters make you wait for an upload, keep a copy of your file on their servers, then limit how many you can do. Vortex skips all of that by doing the work on your own machine.
             </p>
 
             <ul class="showcase-list">
-              <li><span><b>Multi-threaded when it can be.</b> If the page is cross-origin isolated, the threaded core loads and every available CPU core gets used.</span></li>
-              <li><span><b>Graceful single-thread fallback.</b> Deployed without COOP/COEP headers? It switches to the ESM core instead of breaking.</span></li>
-              <li><span><b>Stream copy by default.</b> Every engine that can avoid re-encoding does, because re-encoding is where quality and time both go to die.</span></li>
-              <li><span><b>Live engine log.</b> Every line FFmpeg emits is streamed to the inspector, so you can see exactly what ran and why.</span></li>
+              <li><span><b>Your files stay yours.</b> Nothing is uploaded, copied to a server, or kept anywhere you can't see. Close the tab and it's gone.</span></li>
+              <li><span><b>No queue, no waiting.</b> There's no upload before the work starts, so the job begins the moment you press the button.</span></li>
+              <li><span><b>Quality kept wherever possible.</b> Trimming, combining and removing sound pass your original picture and sound straight through, untouched.</span></li>
+              <li><span><b>Works even when you're offline.</b> Once the page has opened, you can disconnect from the internet and every tool keeps working.</span></li>
             </ul>
           </div>
 
           <div class="terminal reveal" style="--d:100ms">
             <div class="terminal-bar">
-              <span class="mono">ffprobe — local sandbox</span>
+              <span class="mono">What just happened</span>
             </div>
             <div class="terminal-body">
-<span class="l"><span class="d">$</span> <span class="a">ffprobe</span> -hide_banner lecture_recording.mp4</span>
+<span class="l"><span class="d">&#9656;</span> Opening <span class="w">lecture_recording.mp4</span></span>
 <span class="l"> </span>
-<span class="l">Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'lecture.mp4':</span>
-<span class="l">  Duration: <span class="w">02:47:13.40</span>, start: 0.000000, bitrate: <span class="w">2841 kb/s</span></span>
-<span class="l">  Stream #0:0: <span class="a">Video</span>: h264 (High), yuv420p(tv), <span class="w">1920x1080</span> [SAR 1:1]</span>
-<span class="l">              30 fps, 30 tbr, 15360 tbn</span>
-<span class="l">  Stream #0:1: <span class="a">Audio</span>: aac (LC), <span class="w">48000 Hz</span>, stereo, fltp, 128 kb/s</span>
+<span class="l">  Length      <span class="w">2 hours 47 minutes</span></span>
+<span class="l">  Picture     <span class="w">Full HD, 30 frames a second</span></span>
+<span class="l">  Sound       <span class="w">Stereo, high quality</span></span>
 <span class="l"> </span>
-<span class="l"><span class="d">$</span> <span class="a">ffmpeg</span> -ss 01:12:00 -to 01:12:45 -i lecture.mp4 \</span>
-<span class="l">         -c copy chapter_07.mp4</span>
+<span class="l"><span class="d">&#9656;</span> <span class="a">Trimming</span> 1:12:00 &#8594; 1:12:45</span>
+<span class="l">  Keeping the original picture and sound quality</span>
 <span class="l"> </span>
-<span class="l"><span class="g">frame=  1350  time=00:00:44.98  speed=412x</span></span>
-<span class="l"><span class="d">output written to local blob · no network I/O</span></span>
+<span class="l"><span class="g">&#10003; Saved chapter_07.mp4 to your device</span></span>
+<span class="l"><span class="d">Finished in 4 seconds &middot; 0 bytes uploaded</span></span>
             </div>
           </div>
         </div>
@@ -1774,7 +1773,7 @@
               </tr>
               <tr>
                 <th scope="row">File-size limit</th>
-                <td class="vx-col"><span class="cell y">Your RAM</span></td>
+                <td class="vx-col"><span class="cell y">No limit</span></td>
                 <td><span class="cell m">100 MB – 2 GB tiers</span></td>
                 <td><span class="cell y">Your disk</span></td>
               </tr>
@@ -1786,13 +1785,13 @@
               </tr>
               <tr>
                 <th scope="row">Install required</th>
-                <td class="vx-col"><span class="cell y">None — it's a URL</span></td>
+                <td class="vx-col"><span class="cell y">Nothing to install</span></td>
                 <td><span class="cell y">None</span></td>
-                <td><span class="cell n">Gigabytes of installers</span></td>
+                <td><span class="cell n">A big download first</span></td>
               </tr>
               <tr>
                 <th scope="row">Works offline</th>
-                <td class="vx-col"><span class="cell y">After first load</span></td>
+                <td class="vx-col"><span class="cell y">Yes, once loaded</span></td>
                 <td><span class="cell n">Never</span></td>
                 <td><span class="cell y">Always</span></td>
               </tr>
@@ -1805,8 +1804,8 @@
               <tr>
                 <th scope="row">Time to first result</th>
                 <td class="vx-col"><span class="cell y">Instant — no upload</span></td>
-                <td><span class="cell n">Upload + queue + download</span></td>
-                <td><span class="cell m">Launch + import</span></td>
+                <td><span class="cell n">Upload, queue, then download</span></td>
+                <td><span class="cell m">Open it, then import</span></td>
               </tr>
             </tbody>
           </table>
@@ -1819,7 +1818,7 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">05 — Users</span>
+            <span class="mono">05 — Who it's for</span>
             <h2 class="section-title">Built for the jobs <em>people actually have.</em></h2>
           </div>
         </div>
@@ -1833,17 +1832,17 @@
           <article class="usecase reveal" style="--d:70ms">
             <span class="mono">Creators &amp; editors</span>
             <h3>Re-frame and re-track</h3>
-            <p>Crop a widescreen cut for Shorts, mux a clean audio track onto a downloaded video stream, and pull poster frames in one sitting.</p>
+            <p>Crop widescreen footage for Shorts, pair a downloaded video with a better audio track, and save thumbnail images — all in one sitting.</p>
           </article>
           <article class="usecase reveal" style="--d:140ms">
             <span class="mono">Podcasters</span>
             <h3>Rescue a bad recording</h3>
-            <p>Extract audio for transcription, normalise a guest's quiet microphone, and fix a track that drifted out of sync in the recorder.</p>
+            <p>Pull the audio out for transcription, lift a guest's quiet microphone, and fix a track that drifted out of sync in the recorder.</p>
           </article>
           <article class="usecase reveal" style="--d:210ms">
             <span class="mono">Developers &amp; QA</span>
-            <h3>Probe without a toolchain</h3>
-            <p>Inspect a container's codecs on a locked-down machine, or reproduce a media bug without installing FFmpeg just to run ffprobe.</p>
+            <h3>Check a file, install nothing</h3>
+            <p>Check exactly what's inside a file on a machine where you can't install anything — and confirm what a video or audio file really holds.</p>
           </article>
         </div>
       </div>
@@ -1863,42 +1862,42 @@
           <details class="reveal" open>
             <summary>Are my files really never uploaded?</summary>
             <div class="faq-body">
-              Correct. The page loads FFmpeg compiled to WebAssembly, and your file is read into the browser's own memory through the File API. The only network requests this app makes are the initial downloads of the FFmpeg core and the fonts. Once the engine lamp reads <code>READY</code>, you can disconnect from the internet entirely and every tool keeps working.
+              Yes. Everything happens inside your browser, on your own device. There's no upload step and no server holding a copy of anything. The only things the page fetches when it opens are the tools that do the work. Once the status light says ready, you can turn your internet off and everything still works.
             </div>
           </details>
 
           <details class="reveal" style="--d:50ms">
             <summary>Is it genuinely free? What's the catch?</summary>
             <div class="faq-body">
-              No catch and no account. There is no server doing the work, so there is no compute bill to pass on to you — that is the whole architectural point. No credits, no watermarks, no export limits, no upsell.
+              No catch, and no account. Because your own device does the work, there's no server bill to pass on to you. No credits, no watermarks, and no limit on how many files you run through it.
             </div>
           </details>
 
           <details class="reveal" style="--d:100ms">
             <summary>Why does the first load take a few seconds?</summary>
             <div class="faq-body">
-              The browser is downloading the FFmpeg WebAssembly core — roughly 25–30 MB depending on whether the multi-threaded build is available. That happens once and is cached from then on. The status line at the bottom of the studio tells you exactly which core loaded.
+              The page is downloading the tools that do the processing — around 25–30 MB. That happens once; after that your browser keeps them, and the page opens straight away.
             </div>
           </details>
 
           <details class="reveal" style="--d:150ms">
             <summary>What's the maximum file size I can process?</summary>
             <div class="faq-body">
-              There's no application-level limit, but everything lives in memory, so the practical ceiling is your available RAM — and browsers cap a single tab's heap well below your total. As a rule of thumb, keep inputs under a couple of gigabytes. Lossless stream-copy operations (mux, trim, mute, sync) are dramatically lighter than re-encoding ones.
+              There's no fixed limit, but everything is handled in your device's memory, so very large files can run into what your browser allows. As a rough guide, files up to a couple of gigabytes are fine — and jobs like trimming, combining or removing sound are far lighter than compressing.
             </div>
           </details>
 
           <details class="reveal" style="--d:200ms">
             <summary>Does it work on my phone?</summary>
             <div class="faq-body">
-              The interface is fully responsive and the engines do run, but mobile browsers enforce much tighter memory ceilings and are slower at WebAssembly. Short clips and audio-only jobs are fine; a multi-gigabyte video is not a good idea on a phone.
+              The layout adapts and the tools do run, but phones have much less memory to work with. Short clips and audio are fine; a very large video isn't a good idea on a phone.
             </div>
           </details>
 
           <details class="reveal" style="--d:250ms">
             <summary>Why do some operations finish instantly and others take minutes?</summary>
             <div class="faq-body">
-              Stream copy versus re-encode. Trimming, muting, muxing and sync-shifting only rearrange existing packets, so they run at hundreds of times real-time. Compression, re-framing and GIF rendering have to decode and re-encode every single frame — genuinely expensive work, and the same work a desktop editor would be doing.
+              It depends on whether the picture has to be rebuilt. Trimming, combining and removing sound only rearrange what's already in your file, so they finish in seconds and keep the quality. Compressing, making a video vertical and creating GIFs have to rebuild every frame, which genuinely takes time — the same as it would in a desktop editor.
             </div>
           </details>
         </div>
@@ -1911,16 +1910,16 @@
         <div class="cta reveal">
           <div>
             <h2>Your files never leave the tab.</h2>
-            <p>Open the studio and run your first job in the next thirty seconds. No account, no upload, no waiting room.</p>
+            <p>Open the studio and get your first job done in the next thirty seconds. No account, no upload, no waiting room.</p>
           </div>
           <div class="cta-actions">
             <button class="btn" onclick="openTool('tool-mux')">
               <span>Launch Vortex Studio</span>
-              <em>11 ENGINES</em>
+              <em>11 TOOLS</em>
             </button>
             <button class="btn btn--outline" onclick="openTool('tool-inspect')">
-              <span>Inspect a file first</span>
-              <em>FFPROBE</em>
+              <span>Check a file first</span>
+              <em>READS ANY FILE</em>
             </button>
           </div>
         </div>
@@ -1935,23 +1934,23 @@
       <div>
         <span class="mono">Workspace</span>
         <h1>Media Studio</h1>
-        <p>Pick an engine, drop a file, and process it inside your local sandbox. Nothing here talks to a server.</p>
+        <p>Pick a tool, choose a file, and let it run. Everything happens on your own device — nothing is uploaded.</p>
       </div>
       <button class="btn btn--ghost" onclick="navigateTo('landing')">← Back to overview</button>
     </div>
 
-    <nav class="tool-tabs" id="tool-tabs" aria-label="Studio engines">
-      <button class="tool-tab active" data-tool="tool-mux" onclick="switchTool('tool-mux')"><i>01</i> Mux Tracks</button>
-      <button class="tool-tab" data-tool="tool-inspect" onclick="switchTool('tool-inspect')"><i>02</i> ffprobe Inspector</button>
-      <button class="tool-tab" data-tool="tool-trim" onclick="switchTool('tool-trim')"><i>03</i> Lossless Trim</button>
-      <button class="tool-tab" data-tool="tool-extract" onclick="switchTool('tool-extract')"><i>04</i> Extract Audio</button>
-      <button class="tool-tab" data-tool="tool-shrink" onclick="switchTool('tool-shrink')"><i>05</i> Target Compressor</button>
-      <button class="tool-tab" data-tool="tool-reframe" onclick="switchTool('tool-reframe')"><i>06</i> 9:16 Reframe</button>
-      <button class="tool-tab" data-tool="tool-volume" onclick="switchTool('tool-volume')"><i>07</i> Boost Volume</button>
-      <button class="tool-tab" data-tool="tool-gif" onclick="switchTool('tool-gif')"><i>08</i> Palette GIF</button>
-      <button class="tool-tab" data-tool="tool-sync" onclick="switchTool('tool-sync')"><i>09</i> Fix Audio Lag</button>
-      <button class="tool-tab" data-tool="tool-mute" onclick="switchTool('tool-mute')"><i>10</i> Strip Audio</button>
-      <button class="tool-tab" data-tool="tool-snap" onclick="switchTool('tool-snap')"><i>11</i> Frame Grabber</button>
+    <nav class="tool-tabs" id="tool-tabs" aria-label="Studio tools">
+      <button class="tool-tab active" data-tool="tool-mux" onclick="switchTool('tool-mux')"><i>01</i> Combine</button>
+      <button class="tool-tab" data-tool="tool-inspect" onclick="switchTool('tool-inspect')"><i>02</i> Check a file</button>
+      <button class="tool-tab" data-tool="tool-trim" onclick="switchTool('tool-trim')"><i>03</i> Trim</button>
+      <button class="tool-tab" data-tool="tool-extract" onclick="switchTool('tool-extract')"><i>04</i> Save the audio</button>
+      <button class="tool-tab" data-tool="tool-shrink" onclick="switchTool('tool-shrink')"><i>05</i> Shrink</button>
+      <button class="tool-tab" data-tool="tool-reframe" onclick="switchTool('tool-reframe')"><i>06</i> Make vertical</button>
+      <button class="tool-tab" data-tool="tool-volume" onclick="switchTool('tool-volume')"><i>07</i> Boost audio</button>
+      <button class="tool-tab" data-tool="tool-gif" onclick="switchTool('tool-gif')"><i>08</i> Make a GIF</button>
+      <button class="tool-tab" data-tool="tool-sync" onclick="switchTool('tool-sync')"><i>09</i> Fix sync</button>
+      <button class="tool-tab" data-tool="tool-mute" onclick="switchTool('tool-mute')"><i>10</i> Remove sound</button>
+      <button class="tool-tab" data-tool="tool-snap" onclick="switchTool('tool-snap')"><i>11</i> Save a frame</button>
     </nav>
 
     <div class="studio-layout">
@@ -1962,8 +1961,8 @@
           <div class="panel-meta">
             <span class="panel-idx">01</span>
             <div>
-              <h2>Audio &amp; Video Muxer</h2>
-              <p>Fuses a standalone high-resolution video stream (e.g. YouTube 1080p/4K AV1) with an external audio track into one unified MP4. The video bitstream is copied, never re-encoded.</p>
+              <h2>Combine video &amp; audio</h2>
+              <p>Put a video and a separate audio track together into one file. This is the tool for when you've downloaded a video and have a better-quality recording of the same thing — the picture stays exactly as it was.</p>
             </div>
           </div>
 
@@ -1973,8 +1972,8 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Drop the video stream</span>
-            <span class="drop-hint">.mp4, .webm — visual track only</span>
+            <span class="drop-title">Add the video</span>
+            <span class="drop-hint">The picture you want to keep</span>
             <input type="file" id="mux-v-in" accept="video/*">
             <div id="mux-v-tag" class="file-badge"></div>
           </div>
@@ -1985,15 +1984,15 @@
                 <path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="16" r="2.6"/>
               </svg>
             </div>
-            <span class="drop-title">Drop the audio track</span>
-            <span class="drop-hint">.mp3, .m4a, .aac</span>
+            <span class="drop-title">Add the audio</span>
+            <span class="drop-hint">The sound you want to use</span>
             <input type="file" id="mux-a-in" accept="audio/*">
             <div id="mux-a-tag" class="file-badge"></div>
           </div>
 
           <button class="btn-exec" id="btn-run-mux" disabled>
-            Execute stream merge
-            <em>-c:v copy -c:a aac</em>
+            Combine them
+            <em>INSTANT</em>
           </button>
         </div>
 
@@ -2002,8 +2001,8 @@
           <div class="panel-meta">
             <span class="panel-idx">02</span>
             <div>
-              <h2>Stream Inspector</h2>
-              <p>Analyse containers, codecs, pixel formats and bitrates without uploading the file anywhere or installing MediaInfo.</p>
+              <h2>Check what's inside a file</h2>
+              <p>See exactly what a video or audio file contains — how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</p>
             </div>
           </div>
 
@@ -2013,15 +2012,15 @@
                 <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
               </svg>
             </div>
-            <span class="drop-title">Select any media file</span>
-            <span class="drop-hint">Video or audio</span>
+            <span class="drop-title">Choose any video or audio file</span>
+            <span class="drop-hint">Nothing is changed — this only reads it</span>
             <input type="file" id="inspect-in">
             <div id="inspect-tag" class="file-badge"></div>
           </div>
 
           <button class="btn-exec" id="btn-run-inspect" disabled>
-            Probe stream metadata
-            <em>-hide_banner</em>
+            Check this file
+            <em>INSTANT</em>
           </button>
           <div id="inspect-out" class="inspector-output"></div>
         </div>
@@ -2031,8 +2030,8 @@
           <div class="panel-meta">
             <span class="panel-idx">03</span>
             <div>
-              <h2>Lossless Stream Trimmer</h2>
-              <p>Slices footage in about a second by copying packets instead of re-encoding frames. No generation loss, no render wait.</p>
+              <h2>Trim a clip</h2>
+              <p>Cut out just the part you need. Because the original picture and sound are kept as they are, even a very long recording takes only seconds.</p>
             </div>
           </div>
 
@@ -2042,26 +2041,26 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select source video</span>
-            <span class="drop-hint">Any length — stream copy is instant</span>
+            <span class="drop-title">Choose the video to trim</span>
+            <span class="drop-hint">Any length — trimming is instant</span>
             <input type="file" id="trim-in" accept="video/*">
             <div id="trim-tag" class="file-badge"></div>
           </div>
 
           <div class="controls-grid">
             <div class="field">
-              <label for="trim-start">Start timestamp · hh:mm:ss</label>
+              <label for="trim-start">Start time (hours:minutes:seconds)</label>
               <input type="text" id="trim-start" value="00:00:00">
             </div>
             <div class="field">
-              <label for="trim-end">End timestamp · hh:mm:ss</label>
+              <label for="trim-end">End time (hours:minutes:seconds)</label>
               <input type="text" id="trim-end" value="00:01:00">
             </div>
           </div>
 
           <button class="btn-exec" id="btn-run-trim" disabled>
-            Cut video instantly
-            <em>-ss -to -c copy</em>
+            Trim it
+            <em>INSTANT</em>
           </button>
         </div>
 
@@ -2070,8 +2069,8 @@
           <div class="panel-meta">
             <span class="panel-idx">04</span>
             <div>
-              <h2>Audio Track Extractor</h2>
-              <p>Rips the soundtrack out of a video for offline listening or AI transcription. Choose a compressed MP3 or a lossless stream copy.</p>
+              <h2>Save the audio on its own</h2>
+              <p>Pull the sound out of a video so you can listen to it offline, or use it with a transcription tool.</p>
             </div>
           </div>
 
@@ -2081,23 +2080,23 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select video file</span>
-            <span class="drop-hint">The audio stream will be extracted</span>
+            <span class="drop-title">Choose a video</span>
+            <span class="drop-hint">The sound will be saved on its own</span>
             <input type="file" id="extract-in" accept="video/*">
             <div id="extract-tag" class="file-badge"></div>
           </div>
 
           <div class="field">
-            <label for="extract-format">Output format</label>
+            <label for="extract-format">Save it as</label>
             <select id="extract-format">
-              <option value="mp3">MP3 — high quality, 192 kbps</option>
-              <option value="m4a">M4A — lossless stream copy, instant</option>
+              <option value="mp3">MP3 — smaller file, sounds great</option>
+              <option value="m4a">M4A — keeps the original quality, instant</option>
             </select>
           </div>
 
           <button class="btn-exec" id="btn-run-extract" disabled>
-            Extract audio stream
-            <em>-vn</em>
+            Save the audio
+            <em>FAST</em>
           </button>
         </div>
 
@@ -2106,8 +2105,8 @@
           <div class="panel-meta">
             <span class="panel-idx">05</span>
             <div>
-              <h2>Target File Size Compressor</h2>
-              <p>Calculates a bitrate budget for your chosen ceiling and encodes to it — for when a platform rejects the file rather than the quality.</p>
+              <h2>Shrink a video to a size limit</h2>
+              <p>Tell it the size you need and it works out how to fit your video inside it — for when a site or app turns a file away for being too big.</p>
             </div>
           </div>
 
@@ -2117,24 +2116,24 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select video file</span>
-            <span class="drop-hint">Re-encoding — heavier on long clips</span>
+            <span class="drop-title">Choose the video to shrink</span>
+            <span class="drop-hint">Takes longer on long videos</span>
             <input type="file" id="shrink-in" accept="video/*">
             <div id="shrink-tag" class="file-badge"></div>
           </div>
 
           <div class="field">
-            <label for="shrink-target">Target container size</label>
+            <label for="shrink-target">Fit it inside</label>
             <select id="shrink-target">
-              <option value="24">25 MB — Discord standard</option>
-              <option value="15">16 MB — WhatsApp max attachment</option>
-              <option value="48">50 MB — email uploads</option>
+              <option value="24">25 MB — the Discord limit</option>
+              <option value="15">16 MB — the WhatsApp limit</option>
+              <option value="48">50 MB — for sending by email</option>
             </select>
           </div>
 
           <button class="btn-exec" id="btn-run-shrink" disabled>
-            Compress to target size
-            <em>libx264</em>
+            Shrink it
+            <em>TAKES A WHILE</em>
           </button>
         </div>
 
@@ -2143,8 +2142,8 @@
           <div class="panel-meta">
             <span class="panel-idx">06</span>
             <div>
-              <h2>9:16 Vertical Re-framer</h2>
-              <p>Formats widescreen 16:9 footage for Instagram Reels, YouTube Shorts and TikTok with a centre crop. Audio is copied through.</p>
+              <h2>Make a video vertical</h2>
+              <p>Turn widescreen footage into the tall format used by Reels, Shorts and TikTok, cropping neatly to the middle of the picture.</p>
             </div>
           </div>
 
@@ -2154,15 +2153,15 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select a 16:9 widescreen video</span>
-            <span class="drop-hint">Re-encoding — expect a render wait</span>
+            <span class="drop-title">Choose a widescreen video</span>
+            <span class="drop-hint">Takes longer on long videos</span>
             <input type="file" id="reframe-in" accept="video/*">
             <div id="reframe-tag" class="file-badge"></div>
           </div>
 
           <button class="btn-exec" id="btn-run-reframe" disabled>
-            Reframe to 9:16 vertical
-            <em>crop=ih*(9/16):ih</em>
+            Make it vertical
+            <em>TAKES A WHILE</em>
           </button>
         </div>
 
@@ -2171,8 +2170,8 @@
           <div class="panel-meta">
             <span class="panel-idx">07</span>
             <div>
-              <h2>Audio Booster &amp; Normalizer</h2>
-              <p>Amplifies quiet microphones in screen recordings, Zoom calls and Google Meet captures. The video stream is copied, so only audio is reprocessed.</p>
+              <h2>Boost quiet audio</h2>
+              <p>Make a recording louder when the microphone was too far away or the volume was turned down. The picture is left exactly as it is.</p>
             </div>
           </div>
 
@@ -2182,26 +2181,26 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select video file</span>
-            <span class="drop-hint">Video is copied untouched</span>
+            <span class="drop-title">Choose the video</span>
+            <span class="drop-hint">Only the sound is changed</span>
             <input type="file" id="vol-in" accept="video/*">
             <div id="vol-tag" class="file-badge"></div>
           </div>
 
           <div class="controls-grid">
             <div class="field">
-              <label for="vol-mult">Gain multiplier</label>
+              <label for="vol-mult">How much louder</label>
               <select id="vol-mult">
-                <option value="1.5">+150% — gentle lift</option>
-                <option value="2.0">+200% — noticeable boost</option>
-                <option value="3.0">+300% — maximum boost</option>
+                <option value="1.5">A little louder</option>
+                <option value="2.0">Noticeably louder</option>
+                <option value="3.0">As loud as possible</option>
               </select>
             </div>
           </div>
 
           <button class="btn-exec" id="btn-run-vol" disabled>
-            Boost audio levels
-            <em>-af volume</em>
+            Boost the audio
+            <em>FAST</em>
           </button>
         </div>
 
@@ -2210,8 +2209,8 @@
           <div class="panel-meta">
             <span class="panel-idx">08</span>
             <div>
-              <h2>2-Pass Cinema Palette GIF</h2>
-              <p>First pass samples the clip's real colour distribution into a custom palette; second pass maps every frame back through it. Smooth gradients instead of banding.</p>
+              <h2>Make a smooth GIF</h2>
+              <p>Turn a short moment into a looping GIF that keeps its colours clean and smooth, instead of the blotchy, faded look most converters give you.</p>
             </div>
           </div>
 
@@ -2221,26 +2220,26 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select a short video clip</span>
-            <span class="drop-hint">Under 15 seconds — GIFs get large fast</span>
+            <span class="drop-title">Choose a short video</span>
+            <span class="drop-hint">Keep it under 15 seconds — GIFs get big fast</span>
             <input type="file" id="gif-in" accept="video/*">
             <div id="gif-tag" class="file-badge"></div>
           </div>
 
           <div class="controls-grid">
             <div class="field">
-              <label for="gif-start">Start timestamp</label>
+              <label for="gif-start">Start time</label>
               <input type="text" id="gif-start" value="00:00:00">
             </div>
             <div class="field">
-              <label for="gif-dur">Duration · seconds</label>
+              <label for="gif-dur">How many seconds</label>
               <input type="number" id="gif-dur" value="3" min="1" max="15">
             </div>
           </div>
 
           <button class="btn-exec" id="btn-run-gif" disabled>
-            Render high-res GIF
-            <em>2-pass palettegen</em>
+            Make the GIF
+            <em>TAKES A WHILE</em>
           </button>
         </div>
 
@@ -2249,8 +2248,8 @@
           <div class="panel-meta">
             <span class="panel-idx">09</span>
             <div>
-              <h2>Audio Desync Realignment</h2>
-              <p>Shifts a lagging or early audio track forward or backward using an input timestamp offset. Both streams are copied, so it stays lossless.</p>
+              <h2>Fix audio that's out of sync</h2>
+              <p>When the sound drifts ahead of or behind the picture, nudge it back into line. The picture quality is left untouched.</p>
             </div>
           </div>
 
@@ -2260,20 +2259,20 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select the desynced video</span>
-            <span class="drop-hint">Use a negative value to shift audio earlier</span>
+            <span class="drop-title">Choose the video</span>
+            <span class="drop-hint">Use a minus sign to shift the sound earlier</span>
             <input type="file" id="sync-in" accept="video/*">
             <div id="sync-tag" class="file-badge"></div>
           </div>
 
           <div class="field">
-            <label for="sync-offset">Audio offset · seconds</label>
+            <label for="sync-offset">Seconds to shift the sound</label>
             <input type="number" id="sync-offset" step="0.1" value="1.0">
           </div>
 
           <button class="btn-exec" id="btn-run-sync" disabled>
-            Realign tracks
-            <em>-itsoffset</em>
+            Line it up
+            <em>INSTANT</em>
           </button>
         </div>
 
@@ -2282,8 +2281,8 @@
           <div class="panel-meta">
             <span class="panel-idx">10</span>
             <div>
-              <h2>Audio Stripper — Instant Mute</h2>
-              <p>Removes every audio stream from the container — background noise, dialogue and microphone alike — without touching a single video frame.</p>
+              <h2>Remove the sound</h2>
+              <p>Take the audio off a video completely — for background footage, for muting a recording, or when you only need the picture.</p>
             </div>
           </div>
 
@@ -2293,15 +2292,15 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select video file</span>
-            <span class="drop-hint">Output keeps the original video stream</span>
+            <span class="drop-title">Choose the video</span>
+            <span class="drop-hint">The picture is kept exactly as it is</span>
             <input type="file" id="mute-in" accept="video/*">
             <div id="mute-tag" class="file-badge"></div>
           </div>
 
           <button class="btn-exec" id="btn-run-mute" disabled>
-            Mute video, losslessly
-            <em>-an -c:v copy</em>
+            Remove the sound
+            <em>INSTANT</em>
           </button>
         </div>
 
@@ -2310,8 +2309,8 @@
           <div class="panel-meta">
             <span class="panel-idx">11</span>
             <div>
-              <h2>High-Res Frame Grabber</h2>
-              <p>Captures a full-resolution PNG poster at a precise timestamp — ideal for thumbnails, chapter art and video previews.</p>
+              <h2>Save a still frame</h2>
+              <p>Grab a single, full-quality image from any moment in a video. Ideal for thumbnails, previews and chapter images.</p>
             </div>
           </div>
 
@@ -2321,20 +2320,20 @@
                 <rect x="2.5" y="5" width="14" height="14" rx="1"/><path d="M16.5 10l5-3v10l-5-3z"/>
               </svg>
             </div>
-            <span class="drop-title">Select video file</span>
-            <span class="drop-hint">Output is a lossless PNG</span>
+            <span class="drop-title">Choose the video</span>
+            <span class="drop-hint">Saves a full-quality image</span>
             <input type="file" id="snap-in" accept="video/*">
             <div id="snap-tag" class="file-badge"></div>
           </div>
 
           <div class="field">
-            <label for="snap-time">Capture timestamp · hh:mm:ss</label>
+            <label for="snap-time">The moment to capture (hours:minutes:seconds)</label>
             <input type="text" id="snap-time" value="00:00:05">
           </div>
 
           <button class="btn-exec" id="btn-run-snap" disabled>
-            Snap poster image
-            <em>-vframes 1</em>
+            Save the frame
+            <em>INSTANT</em>
           </button>
         </div>
 
@@ -2342,9 +2341,9 @@
         <div class="status">
           <div class="status-left">
             <span class="status-dot" id="engine-dot"></span>
-            <span id="engine-msg">Initializing WebAssembly core…</span>
+            <span id="engine-msg">Getting things ready…</span>
           </div>
-          <span>100% in-browser · no network I/O during processing</span>
+          <span>Nothing is uploaded — ever</span>
         </div>
 
       </div>
@@ -2352,24 +2351,24 @@
       <!-- Rail -->
       <aside class="rail">
         <div class="rail-block">
-          <h4>Local sandbox</h4>
-          <p><b>Your file never leaves this tab.</b> It's read into browser memory, processed by WebAssembly, and written back to your disk. There is no server on the other end of this.</p>
+          <h4>Runs on your device</h4>
+          <p><b>Your file never leaves this tab.</b> It's opened in your browser, worked on there, and saved back to your device. There's no server on the other end of this.</p>
         </div>
 
         <div class="rail-block">
           <h4>Getting the best results</h4>
           <ul class="rail-list">
-            <li><span>Prefer the stream-copy engines — mux, trim, mute, sync. They finish in seconds with zero quality loss.</span></li>
-            <li><span>Re-encoding engines (compress, reframe, GIF) scale with clip length. Keep the tab open and let them run.</span></li>
-            <li><span>Probe first if an engine errors — the inspector reveals the actual container and codec.</span></li>
+            <li><span>Trimming, combining and removing sound finish in seconds and keep your original quality.</span></li>
+            <li><span>Compressing, making a video vertical and creating GIFs take longer on long videos. Keep the tab open and let them run.</span></li>
+            <li><span>If something doesn't work, use the file checker to confirm what's actually inside the file.</span></li>
           </ul>
         </div>
 
         <div class="rail-block">
-          <h4>Engine</h4>
+          <h4>What's powering it</h4>
           <ul class="rail-list">
-            <li><span>FFmpeg compiled to WebAssembly, driven with the same flags as the CLI.</span></li>
-            <li><span>Autodetects multi-threading support and falls back gracefully when it's unavailable.</span></li>
+            <li><span>The same professional-grade processing that desktop editing software uses, running inside your browser.</span></li>
+            <li><span>It uses as much of your device's power as the browser allows, and adapts automatically.</span></li>
           </ul>
         </div>
       </aside>
@@ -2389,24 +2388,24 @@
             </span>
             Vortex Studio<sup>&reg;</sup>
           </button>
-          <p>A zero-cloud media engine. Eleven FFmpeg pipelines running entirely inside your browser — private by architecture, not by policy.</p>
+          <p>Eleven media tools that run entirely inside your browser. Nothing to install, nothing to sign up for, and nothing ever uploaded.</p>
         </div>
 
         <div class="footer-col">
           <h4>Studio</h4>
           <ul>
-            <li><button onclick="openTool('tool-mux')">Mux tracks</button></li>
-            <li><button onclick="openTool('tool-trim')">Lossless trim</button></li>
-            <li><button onclick="openTool('tool-shrink')">Target compressor</button></li>
-            <li><button onclick="openTool('tool-reframe')">9:16 reframe</button></li>
-            <li><button onclick="openTool('tool-gif')">Palette GIF</button></li>
+            <li><button onclick="openTool('tool-mux')">Combine video &amp; audio</button></li>
+            <li><button onclick="openTool('tool-trim')">Trim a clip</button></li>
+            <li><button onclick="openTool('tool-shrink')">Shrink a video</button></li>
+            <li><button onclick="openTool('tool-reframe')">Make it vertical</button></li>
+            <li><button onclick="openTool('tool-gif')">Make a GIF</button></li>
           </ul>
         </div>
 
         <div class="footer-col">
           <h4>Explore</h4>
           <ul>
-            <li><a href="#engines">Engine index</a></li>
+            <li><a href="#engines">The eleven tools</a></li>
             <li><a href="#workflow">Workflow</a></li>
             <li><a href="#compare">Comparison</a></li>
             <li><a href="#faq">FAQ</a></li>
@@ -2440,6 +2439,7 @@
     const engineDot = document.getElementById('engine-dot');
     const engineMsg = document.getElementById('engine-msg');
     let isReady = false;
+    const dropzoneChecks = [];
 
     /* ---------- View navigation ---------- */
     window.navigateTo = function (targetView) {
@@ -2678,22 +2678,18 @@
         await ffmpeg.load(config);
 
         engineDot.className = 'status-dot ready';
-        engineMsg.innerText = multiThread
-          ? 'Multi-thread engine ready (high performance)'
-          : 'Engine active & ready (single-thread fallback)';
+        engineMsg.innerText = 'Ready — everything runs on your device';
         isReady = true;
         refreshDropzones();
       } catch (err) {
         engineDot.className = 'status-dot';
-        engineMsg.innerText = 'Engine initialization error — check your connection and reload.';
+        engineMsg.innerText = "Couldn't get started — check your connection and reload the page.";
         console.error(err);
       }
     }
     initCore();
 
     /* ---------- Dropzones ---------- */
-    const dropzoneChecks = [];
-
     function bindDropzone(inputId, tagId, buttonId, secondaryId = null) {
       const el = document.getElementById(inputId);
       const tag = document.getElementById(tagId);
@@ -2762,17 +2758,17 @@
     }
     function setDone(msg) {
       engineDot.className = 'status-dot ready';
-      engineMsg.innerText = msg || 'Execution complete.';
+      engineMsg.innerText = msg || 'Done — your file has been saved to your device.';
     }
     function setError(err) {
       engineDot.className = 'status-dot';
-      engineMsg.innerText = 'Engine error — see the browser console.';
+      engineMsg.innerText = 'Something went wrong — try again, or check the file.';
       console.error(err);
     }
 
     /* ---------- 01 MUX ---------- */
     document.getElementById('btn-run-mux').addEventListener('click', async () => {
-      setBusy('Muxing audio & video streams…');
+      setBusy('Combining the video and audio…');
       try {
         const v = document.getElementById('mux-v-in').files[0];
         const a = document.getElementById('mux-a-in').files[0];
@@ -2788,18 +2784,18 @@
     document.getElementById('btn-run-inspect').addEventListener('click', async () => {
       const outBox = document.getElementById('inspect-out');
       outBox.style.display = 'block';
-      outBox.innerText = 'Inspecting bitstream packets…\n';
+      outBox.innerText = 'Reading the file…\n';
       try {
         const f = document.getElementById('inspect-in').files[0];
         await ffmpeg.writeFile('probe.dat', await fetchFile(f));
         await ffmpeg.exec(['-i', 'probe.dat']);
-        setDone('Inspection finished — output above.');
+        setDone('Finished — the details are above.');
       } catch (err) { setError(err); }
     });
 
     /* ---------- 03 TRIM ---------- */
     document.getElementById('btn-run-trim').addEventListener('click', async () => {
-      setBusy('Cutting segment via stream copy…');
+      setBusy('Trimming your clip…');
       try {
         const f = document.getElementById('trim-in').files[0];
         const s = document.getElementById('trim-start').value;
@@ -2813,7 +2809,7 @@
 
     /* ---------- 04 EXTRACT AUDIO ---------- */
     document.getElementById('btn-run-extract').addEventListener('click', async () => {
-      setBusy('Extracting audio stream…');
+      setBusy('Saving the audio on its own…');
       try {
         const f = document.getElementById('extract-in').files[0];
         const fmt = document.getElementById('extract-format').value;
@@ -2831,7 +2827,7 @@
 
     /* ---------- 05 TARGET SHRINK ---------- */
     document.getElementById('btn-run-shrink').addEventListener('click', async () => {
-      setBusy('Calculating optimal bitrate & compressing…');
+      setBusy('Working out the right size, then compressing…');
       try {
         const f = document.getElementById('shrink-in').files[0];
         const mb = parseInt(document.getElementById('shrink-target').value, 10);
@@ -2845,7 +2841,7 @@
 
     /* ---------- 06 REFRAME 9:16 ---------- */
     document.getElementById('btn-run-reframe').addEventListener('click', async () => {
-      setBusy('Rendering 9:16 vertical crop…');
+      setBusy('Rebuilding your video in vertical…');
       try {
         const f = document.getElementById('reframe-in').files[0];
         await ffmpeg.writeFile('rf.mp4', await fetchFile(f));
@@ -2857,7 +2853,7 @@
 
     /* ---------- 07 VOLUME BOOST ---------- */
     document.getElementById('btn-run-vol').addEventListener('click', async () => {
-      setBusy('Amplifying audio levels…');
+      setBusy('Making the audio louder…');
       try {
         const f = document.getElementById('vol-in').files[0];
         const mult = document.getElementById('vol-mult').value;
@@ -2870,14 +2866,14 @@
 
     /* ---------- 08 PALETTE GIF ---------- */
     document.getElementById('btn-run-gif').addEventListener('click', async () => {
-      setBusy('Pass 1 — analysing colour distribution…');
+      setBusy('Step 1 of 2 — choosing the best colours…');
       try {
         const f = document.getElementById('gif-in').files[0];
         const s = document.getElementById('gif-start').value;
         const d = document.getElementById('gif-dur').value;
         await ffmpeg.writeFile('g.mp4', await fetchFile(f));
         await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-vf', 'fps=12,scale=480:-1:flags=lanczos,palettegen', 'pal.png']);
-        setBusy('Pass 2 — mapping pixel matrix…');
+        setBusy('Step 2 of 2 — building the GIF…');
         await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-i', 'pal.png', '-filter_complex', 'fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse', 'out.gif']);
         await triggerClientDownload('out.gif', `loop_${Date.now()}.gif`, 'image/gif');
         setDone();
@@ -2886,7 +2882,7 @@
 
     /* ---------- 09 FIX DESYNC ---------- */
     document.getElementById('btn-run-sync').addEventListener('click', async () => {
-      setBusy('Realigning track offsets…');
+      setBusy('Lining the sound back up…');
       try {
         const f = document.getElementById('sync-in').files[0];
         const offset = document.getElementById('sync-offset').value;
@@ -2899,7 +2895,7 @@
 
     /* ---------- 10 MUTE ---------- */
     document.getElementById('btn-run-mute').addEventListener('click', async () => {
-      setBusy('Stripping audio stream…');
+      setBusy('Removing the sound…');
       try {
         const f = document.getElementById('mute-in').files[0];
         await ffmpeg.writeFile('mu.mp4', await fetchFile(f));
@@ -2911,7 +2907,7 @@
 
     /* ---------- 11 FRAME GRABBER ---------- */
     document.getElementById('btn-run-snap').addEventListener('click', async () => {
-      setBusy('Capturing poster frame…');
+      setBusy('Saving your frame…');
       try {
         const f = document.getElementById('snap-in').files[0];
         const t = document.getElementById('snap-time').value;
