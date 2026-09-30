@@ -386,8 +386,10 @@
       letter-spacing: -0.045em;
       margin-bottom: 1.75rem;
     }
-    .hero-title span { display: block; }
-    .hero-title span:last-child { color: var(--ink-3); }
+    /* Direct children only: the two halves are blocks, but an accent
+       phrase nested inside a half has to stay inline. */
+    .hero-title > span { display: block; }
+    .hero-title > span:last-child { color: var(--ink-3); }
 
     .hero-desc {
       font-size: clamp(1.06rem, 1.35vw, 1.2rem);
@@ -1420,7 +1422,7 @@
     .ed-stat { display: flex; flex-direction: column; gap: .15rem; }
     .ed-stat span {
       font-family: 'JetBrains Mono', monospace;
-      font-size: .56rem;
+      font-size: .62rem;
       letter-spacing: .12em;
       color: var(--ink-3);
     }
@@ -1624,7 +1626,24 @@
     html.js-reveal .reveal.in { opacity: 1; }
 
     /* ============================================================
-       20. RESPONSIVE
+       20. ACCENT EMPHASIS
+       ============================================================ */
+    /* One accent phrase per block, on the words that carry the claim:
+       the file stays on the device, and the tool count. Everything else
+       keeps the two-tone ink treatment, because an accent that appears
+       on every heading stops being an accent.
+
+       Always --accent-text, never --accent. The fill hue is unreadable
+       as foreground in light mode (about 1.5:1 on --bg); --accent-text
+       holds AAA on all four backgrounds in both themes.
+
+       Put the span innermost, inside any <b> rather than around it:
+       component rules like `.rail-block p b` set their own colour and
+       out-rank a single class, so wrapping the bold loses the accent. */
+    .hl { color: var(--accent-text); }
+
+    /* ============================================================
+       21. RESPONSIVE
        ============================================================ */
     @media (max-width: 1080px) {
       .hero-top { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -1740,7 +1759,7 @@
 
             <h1 class="hero-title">
               <span>Edit video &amp; audio</span>
-              <span>without the upload.</span>
+              <span>without the <span class="hl">upload.</span></span>
             </h1>
 
             <p class="hero-desc">
@@ -1856,7 +1875,7 @@
         <div class="section-head">
           <div class="reveal">
             <span class="mono">01 / Workflow</span>
-            <h2 class="section-title">Three steps, and <em>no waiting room.</em></h2>
+            <h2 class="section-title"><span class="hl">Three steps</span>, and <em>no waiting room.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
             Everything happens in the browser tab you already have open. There's nothing to upload, no queue to wait in, and nothing left behind afterwards.
@@ -1889,7 +1908,7 @@
         <div class="section-head">
           <div class="reveal">
             <span class="mono">02 / The tools</span>
-            <h2 class="section-title">Eleven tools that used to <em>need a desktop app.</em></h2>
+            <h2 class="section-title"><span class="hl">Eleven tools</span> that used to <em>need a desktop app.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
             Each one opens straight in the studio. Pick any of them to start, and switch between them whenever you like.
@@ -2016,7 +2035,7 @@
             <span class="mono" style="display:block;margin-bottom:1.25rem;">03 / Why it's better</span>
             <h2 class="section-title" style="margin-bottom:1.1rem;">It works the way <em>you'd expect.</em></h2>
             <p class="section-note">
-              Most online converters make you wait for an upload, keep a copy of your file on their servers, then limit how many you can do. Vortex skips all of that by doing the work on your own machine.
+              Most online converters make you wait for an upload, keep a copy of your file on their servers, then limit how many you can do. Vortex skips all of that by doing the work <span class="hl">on your own machine</span>.
             </p>
 
             <ul class="showcase-list">
@@ -2242,7 +2261,7 @@
       <div>
         <span class="mono">Workspace</span>
         <h1>Media Studio</h1>
-        <p>Pick a tool, choose a file, and let it run. Everything happens on your own device. Nothing is uploaded.</p>
+        <p>Pick a tool, choose a file, and let it run. Everything happens on your own device. <span class="hl">Nothing is uploaded.</span></p>
       </div>
       <button class="btn btn--ghost" onclick="navigateTo('landing')">← Back to overview</button>
     </div>
@@ -2325,6 +2344,7 @@
             <div class="ed-stat"><span>RANGE START</span><b id="ed-in">0:00.000</b></div>
             <div class="ed-stat"><span>RANGE END</span><b id="ed-out">0:00.000</b></div>
             <div class="ed-stat"><span>LENGTH</span><b id="ed-len">0:00.000</b></div>
+            <div class="ed-stat"><span>PEAK LEVEL</span><b id="ed-peak">--</b></div>
             <button class="ed-btn ed-btn--wide ed-use" id="ed-use" type="button">Use this range in Trim</button>
           </div>
 
@@ -2734,7 +2754,7 @@
       <aside class="rail">
         <div class="rail-block">
           <h4>Runs on your device</h4>
-          <p><b>Your file never leaves this tab.</b> It's opened in your browser, worked on there, and saved back to your device. There's no server on the other end of this.</p>
+          <p><b><span class="hl">Your file never leaves this tab.</span></b> It's opened in your browser, worked on there, and saved back to your device. There's no server on the other end of this.</p>
         </div>
 
         <div class="rail-block">
@@ -3147,6 +3167,7 @@
       const inEl      = document.getElementById('ed-in');
       const outEl     = document.getElementById('ed-out');
       const lenEl     = document.getElementById('ed-len');
+      const peakEl    = document.getElementById('ed-peak');
       const nameEl    = document.getElementById('ed-name');
       const scopeName = document.getElementById('ed-scope-name');
       const meterEl   = document.getElementById('ed-meter');
@@ -3162,6 +3183,7 @@
 
       let duration = 0;        // seconds, 0 until metadata lands
       let peaks = null;        // per-column amplitude, one entry per canvas px
+      let peakMax = 0;         // loudest sample in the clip, 0..1
       let audioBuffer = null;  // decoded samples, for the waveform and the meter
       let filmstrip = [];      // captured video frames, left to right
       let range = { a: 0, b: 0, set: false };
@@ -3249,6 +3271,27 @@
         return out;
       }
 
+      /* A quiet recording (a phone across the room, a mic turned down) would
+         otherwise draw as a flat line, which reads as "this is broken"
+         rather than "this is quiet". So the picture is fitted to the clip's
+         own loudest point, however quiet that is, and the true peak is shown
+         in the readout so the scaling is never a secret. Below the noise
+         floor there is nothing worth drawing, so it stays a flat line. */
+      const SILENT = 1e-4;   // about -80 dBFS
+      function displayGain() {
+        return peakMax < SILENT ? 0 : 1 / peakMax;
+      }
+
+      function measurePeaks(columns) {
+        peaks = audioBuffer ? computePeaks(audioBuffer, columns) : null;
+        peakMax = 0;
+        if (peaks) {
+          for (let i = 0; i < peaks.length; i++) {
+            if (peaks[i] > peakMax) peakMax = peaks[i];
+          }
+        }
+      }
+
       /* ---------- drawing ---------- */
       function draw() {
         const w = track.clientWidth, h = track.clientHeight;
@@ -3290,9 +3333,10 @@
         }
         const np = peaks.length;
         const played = cssVar('--wave-peak'), rest = cssVar('--wave');
+        const gain = displayGain();
         for (let x = 0; x < w; x++) {
           const p = peaks[Math.min(np - 1, Math.floor(x / w * np))];
-          const v = Math.max(0.75, p * amp);
+          const v = Math.max(0.75, Math.min(1, p * gain) * amp);
           g.fillStyle = x <= playedX ? played : rest;
           g.fillRect(x, mid - v, 1, v * 2);
         }
@@ -3300,13 +3344,25 @@
 
       function resizeCanvas() {
         const w = track.clientWidth || 600;
-        if (audioBuffer) peaks = computePeaks(audioBuffer, w);
+        if (audioBuffer) measurePeaks(w);
         buildRuler();
         draw();
+        // The waveform arrives after the metadata does, so the readout has to
+        // catch up here as well as in the playhead loop.
+        render();
+      }
+
+      /* Loudest point in the clip, in the units an audio tool speaks. */
+      function peakLabel() {
+        if (!audioBuffer) return '--';
+        if (peakMax < SILENT) return 'silent';
+        const db = 20 * Math.log10(peakMax);
+        return (db > -0.05 ? '0.0' : db.toFixed(1)) + ' dB';
       }
 
       /* ---------- playhead + range ---------- */
       function render() {
+        peakEl.textContent = peakLabel();
         if (!duration) { mark.style.left = '0%'; return; }
         mark.style.left = ((video.currentTime || 0) / duration * 100) + '%';
         clockEl.textContent = fmt(video.currentTime || 0);
@@ -3566,7 +3622,7 @@
         video.pause();
 
         currentFile = file;
-        peaks = null; audioBuffer = null; filmstrip = [];
+        peaks = null; peakMax = 0; audioBuffer = null; filmstrip = [];
         range = { a: 0, b: 0, set: false };
         looping = false;
         loopBtn.classList.remove('is-on');
@@ -3618,7 +3674,7 @@
         video.load();
         if (objectURL) { URL.revokeObjectURL(objectURL); objectURL = null; }
         root.classList.remove('is-open');
-        duration = 0; peaks = null; audioBuffer = null; filmstrip = [];
+        duration = 0; peaks = null; peakMax = 0; audioBuffer = null; filmstrip = [];
         currentFile = null;
         range = { a: 0, b: 0, set: false };
         nameEl.textContent = 'No file loaded';
