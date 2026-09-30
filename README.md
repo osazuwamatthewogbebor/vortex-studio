@@ -43,7 +43,7 @@ Because WebAssembly uses `SharedArrayBuffer` for multi-threaded performance, bro
 **Osazuwa Matthew**
 
 - **Email**: [osazuwamatthewogbebor@gmail.com](mailto:osazuwamatthewogbebor@gmail.com)
-- **WhatsApp**: [+234 826 477 6022](https://wa.me/2348264776022)
+- **WhatsApp**: [+234 816 477 6022](https://wa.me/2348164776022)
 
 ---
 
