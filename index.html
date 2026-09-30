@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vortex Studio — Edit video &amp; audio without the upload</title>
-  <meta name="description" content="Eleven studio-grade tools that run right in your browser. Trim, compress, convert and fix your videos and audio — with nothing ever uploaded.">
+  <title>Vortex Studio: Edit video &amp; audio without the upload</title>
+  <meta name="description" content="Eleven studio-grade tools that run right in your browser. Trim, compress, convert and fix your videos and audio, with nothing ever uploaded.">
   <meta name="theme-color" content="#0A0A0B">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23D7FB4E'/%3E%3Cpath d='M3 12h3l3-7 4 14 3-7h5' fill='none' stroke='%230A0A0B' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E">
 
@@ -26,28 +26,44 @@
 
       --line:      rgba(255, 255, 255, 0.10);
       --line-soft: rgba(255, 255, 255, 0.06);
-      --line-hard: rgba(255, 255, 255, 0.20);
+      --line-hard: rgba(255, 255, 255, 0.35);
 
       --ink:       #F3F2EE;
-      --ink-2:     #8B8B90;
-      --ink-3:     #55555B;
+      --ink-2:     #B4B4B1;
+      --ink-3:     #A6A6A3;
 
-      --accent:    #D7FB4E;
-      --accent-ink:#0A0A0B;
-      --accent-dim:rgba(215, 251, 78, 0.09);
-      --accent-line:rgba(215, 251, 78, 0.42);
+      /* --accent is the FILL (buttons, selection blocks, the CTA panel).
+         --accent-text is the same hue used as FOREGROUND: text, hairlines,
+         indicators. They only diverge in the light theme, where lime-on-cream
+         has almost no luminance separation and the fill hue is unreadable as
+         text. Keep them in sync here. */
+      --accent:      #D7FB4E;
+      --accent-ink:  #0A0A0B;
+      --accent-text: #D7FB4E;
+      --accent-dim:  rgba(215, 251, 78, 0.09);
+      --accent-line: rgba(215, 251, 78, 0.42);
 
       --ok:        #7BE495;
+      --dot-idle:  #D9A21B;
+      --dot-busy:  #4B8BFF;
 
       --btn-bg:    #D7FB4E;
       --btn-ink:   #0A0A0B;
       --btn-hover: #E4FF77;
 
-      --wave:      #4A4A52;
-      --wave-peak: #6E6E78;
+      /* The deck reads its bars from --wave and paints the played portion with
+         --wave-peak. Both clear 3:1 on --bg-sunk; the peak clears 4.5:1 so the
+         played/unplayed split is legible, not just present. */
+      --wave:      #8C8C96;
+      --wave-peak: #C9C9D1;
 
+      /* The terminal is always a dark surface in both themes, so it carries its
+         own palette rather than borrowing the page's. */
       --code-bg:   #08080A;
       --code-ink:  #C7C7CE;
+      --code-dim:  #A0A0A6;
+      --code-good: #7BE495;
+      --code-warn: #F5F7FA;
     }
 
     :root[data-theme="light"] {
@@ -58,28 +74,38 @@
 
       --line:      rgba(10, 10, 11, 0.14);
       --line-soft: rgba(10, 10, 11, 0.08);
-      --line-hard: rgba(10, 10, 11, 0.30);
+      --line-hard: rgba(10, 10, 11, 0.45);
 
       --ink:       #0C0C0D;
-      --ink-2:     #5B5B60;
-      --ink-3:     #8C8C91;
+      --ink-2:     #3C3C3E;
+      --ink-3:     #48484A;
 
-      --accent:    #C9EC3C;
-      --accent-ink:#0C0C0D;
-      --accent-dim:rgba(150, 190, 20, 0.22);
-      --accent-line:rgba(120, 155, 10, 0.55);
+      /* Light mode splits the accent: --accent stays the lime FILL (the CTA
+         panel, the selection block, where dark text sits on top of it), while
+         --accent-text is the same hue pushed down to an olive that clears AAA
+         as foreground. Lime-on-cream is 1.19:1, unusable for text. */
+      --accent:      #C9EC3C;
+      --accent-ink:  #0C0C0D;
+      --accent-text: #3F4A13;
+      --accent-dim:  rgba(150, 190, 20, 0.22);
+      --accent-line: rgba(70, 92, 0, 0.75);
 
-      --ok:        #1C7A45;
+      --ok:        #0E5426;
+      --dot-idle:  #8B6811;
+      --dot-busy:  #1F63C8;
 
       --btn-bg:    #0C0C0D;
       --btn-ink:   #F2F0EA;
       --btn-hover: #2A2A2E;
 
-      --wave:      #B4B0A6;
-      --wave-peak: #8A857A;
+      --wave:      #5C584F;
+      --wave-peak: #2E2A24;
 
       --code-bg:   #0C0C0D;
       --code-ink:  #D6D3CB;
+      --code-dim:  #A0A0A6;
+      --code-good: #7BE495;
+      --code-warn: #F5F7FA;
     }
 
     /* ============================================================
@@ -94,7 +120,7 @@
       background: var(--bg);
       color: var(--ink);
       font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 16px;
+      font-size: 1.0625rem;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -111,7 +137,7 @@
     a { color: inherit; }
     ::selection { background: var(--accent); color: var(--accent-ink); }
 
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 
     ::-webkit-scrollbar { width: 11px; height: 11px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -136,7 +162,7 @@
     }
     .section--flush { border-top: none; }
 
-    /* Mono micro-label — the Audacity "spec sheet" voice */
+    /* Mono micro-label: the Audacity "spec sheet" voice */
     .mono {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: .68rem;
@@ -167,14 +193,14 @@
       color: var(--ink-3);
     }
     .section-note {
-      font-size: .95rem;
+      font-size: 1.02rem;
       color: var(--ink-2);
       line-height: 1.65;
       max-width: 46ch;
     }
 
     /* ============================================================
-       4. BUTTONS — flat, small radius, one loud fill
+       4. BUTTONS: flat, small radius, one loud fill
        ============================================================ */
     .btn {
       display: inline-flex;
@@ -186,7 +212,7 @@
       border-radius: 4px;
       background: var(--btn-bg);
       color: var(--btn-ink);
-      font-size: .875rem;
+      font-size: .92rem;
       font-weight: 600;
       letter-spacing: -0.005em;
       text-decoration: none;
@@ -204,12 +230,12 @@
     }
     .btn--ghost:hover { background: var(--bg-raise); border-color: var(--ink-3); }
 
-    /* Underlined text link — Audacity's "View release notes" */
+    /* Underlined text link: Audacity's "View release notes" */
     .link {
       display: inline-flex;
       align-items: center;
       gap: .45rem;
-      font-size: .875rem;
+      font-size: .93rem;
       font-weight: 600;
       color: var(--ink);
       text-decoration: none;
@@ -217,7 +243,7 @@
       border-bottom: 1px solid var(--line-hard);
       transition: border-color .18s ease, color .18s ease;
     }
-    .link:hover { border-color: var(--accent); color: var(--accent); }
+    .link:hover { border-color: var(--accent-text); color: var(--accent-text); }
     .link svg { width: 14px; height: 14px; }
 
     .icon-btn {
@@ -246,14 +272,14 @@
       border-bottom: 1px solid var(--line);
     }
 
-    /* Scroll progress — a single 2px accent rule under the header */
+    /* Scroll progress: a single 2px accent rule under the header */
     #scroll-progress {
       position: fixed;
       top: 0;
       left: 0;
       height: 2px;
       width: 0%;
-      background: var(--accent);
+      background: var(--accent-text);
       z-index: 1000;
       transition: width .1s linear;
     }
@@ -305,7 +331,7 @@
       margin-left: 1rem;
     }
     .nav a {
-      font-size: .85rem;
+      font-size: .88rem;
       font-weight: 500;
       color: var(--ink-2);
       text-decoration: none;
@@ -345,13 +371,13 @@
     .hero-eyebrow .dot {
       width: 6px;
       height: 6px;
-      background: var(--accent);
+      background: var(--accent-text);
       border-radius: 50%;
       flex-shrink: 0;
     }
 
     /* Two-tone headline, Musikalis-style: same weight, second line dimmed.
-       Sized so each half holds one line at every width — the two-tone read
+       Sized so each half holds one line at every width. The two-tone read
        collapses the moment either one wraps. */
     .hero-title {
       font-size: clamp(2rem, 4.6vw, 4.3rem);
@@ -364,7 +390,7 @@
     .hero-title span:last-child { color: var(--ink-3); }
 
     .hero-desc {
-      font-size: clamp(1rem, 1.3vw, 1.12rem);
+      font-size: clamp(1.06rem, 1.35vw, 1.2rem);
       color: var(--ink-2);
       line-height: 1.6;
       max-width: 50ch;
@@ -379,7 +405,7 @@
       flex-wrap: wrap;
     }
 
-    /* Technical readout column — the "spec sheet" */
+    /* Technical readout column: the "spec sheet" */
     .spec {
       border-top: 1px solid var(--line);
       padding-top: 1.25rem;
@@ -401,7 +427,7 @@
       color: var(--ink-3);
     }
     .spec-row dd {
-      font-size: .84rem;
+      font-size: .9rem;
       color: var(--ink);
       font-weight: 500;
       line-height: 1.45;
@@ -415,7 +441,7 @@
     }
 
     /* ============================================================
-       7. THE DECK — waveform instrument
+       7. THE DECK: waveform instrument
        ============================================================ */
     .deck { width: 100%; padding-bottom: clamp(3rem, 6vw, 5rem); }
 
@@ -452,7 +478,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--accent-text);
     }
 
     /* Time ruler */
@@ -504,8 +530,8 @@
       bottom: 0;
       background: var(--accent);
       opacity: .16;
-      border-left: 1px solid var(--accent);
-      border-right: 1px solid var(--accent);
+      border-left: 1px solid var(--accent-text);
+      border-right: 1px solid var(--accent-text);
       pointer-events: none;
     }
     .wave-select-tag {
@@ -529,7 +555,7 @@
       top: 0;
       bottom: 0;
       width: 1px;
-      background: var(--accent);
+      background: var(--accent-text);
       pointer-events: none;
     }
     .wave-head::before {
@@ -539,7 +565,7 @@
       left: -3px;
       width: 7px;
       height: 7px;
-      background: var(--accent);
+      background: var(--accent-text);
       clip-path: polygon(0 0, 100% 0, 50% 100%);
     }
 
@@ -585,7 +611,7 @@
       white-space: nowrap;
       transition: color .2s ease;
     }
-    .formats-track span:hover { color: var(--accent); }
+    .formats-track span:hover { color: var(--accent-text); }
 
     /* ============================================================
        9. NUMBERS
@@ -610,7 +636,7 @@
       font-variant-numeric: tabular-nums;
     }
     .number .mono { display: block; margin-bottom: .5rem; color: var(--ink-2); }
-    .number p { font-size: .82rem; color: var(--ink-3); line-height: 1.55; }
+    .number p { font-size: .9rem; color: var(--ink-3); line-height: 1.55; }
 
     /* ============================================================
        10. STEPS
@@ -626,7 +652,7 @@
       font-size: .7rem;
       font-weight: 600;
       letter-spacing: .1em;
-      color: var(--accent);
+      color: var(--accent-text);
       display: block;
       margin-bottom: 1.75rem;
     }
@@ -636,10 +662,10 @@
       letter-spacing: -0.025em;
       margin-bottom: .7rem;
     }
-    .step p { font-size: .88rem; color: var(--ink-2); line-height: 1.65; }
+    .step p { font-size: .95rem; color: var(--ink-2); line-height: 1.65; }
 
     /* ============================================================
-       11. ENGINE INDEX — editorial spec list, no cards
+       11. ENGINE INDEX: editorial spec list, no cards
        ============================================================ */
     .engines {
       display: grid;
@@ -675,7 +701,7 @@
       padding-top: .25rem;
       transition: color .2s ease;
     }
-    .engine:hover .engine-idx { color: var(--accent); }
+    .engine:hover .engine-idx { color: var(--accent-text); }
 
     .engine-name {
       font-size: 1.02rem;
@@ -699,7 +725,7 @@
       text-transform: none;
     }
     .engine-desc {
-      font-size: .855rem;
+      font-size: .92rem;
       color: var(--ink-2);
       line-height: 1.6;
       max-width: 44ch;
@@ -712,7 +738,7 @@
       transition: opacity .2s ease, transform .2s ease, color .2s ease;
       padding-top: .15rem;
     }
-    .engine:hover .engine-go { opacity: 1; transform: translateX(0); color: var(--accent); }
+    .engine:hover .engine-go { opacity: 1; transform: translateX(0); color: var(--accent-text); }
     .engine-go svg { width: 16px; height: 16px; }
 
     /* ============================================================
@@ -735,16 +761,16 @@
       gap: .85rem;
       padding: .95rem 0;
       border-bottom: 1px solid var(--line-soft);
-      font-size: .875rem;
+      font-size: .93rem;
       color: var(--ink-2);
       line-height: 1.6;
     }
     .showcase-list li::before {
-      content: '—';
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--accent);
-      font-size: .8rem;
-      line-height: 1.6;
+      content: '';
+      width: 10px;
+      height: 1px;
+      margin-top: .72rem;
+      background: var(--accent-text);
     }
     .showcase-list b { color: var(--ink); font-weight: 600; }
 
@@ -761,7 +787,7 @@
       padding: .65rem .9rem;
       border-bottom: 1px solid rgba(255, 255, 255, .08);
     }
-    .terminal-bar .mono { color: #6A6A72; }
+    .terminal-bar .mono { color: var(--code-dim); }
     .terminal-body {
       padding: 1.15rem 1.25rem 1.35rem;
       font-family: 'JetBrains Mono', monospace;
@@ -771,10 +797,10 @@
       overflow-x: auto;
     }
     .terminal-body .l { display: block; white-space: pre; }
-    .terminal-body .d { color: #6A6A72; }
+    .terminal-body .d { color: var(--code-dim); }
     .terminal-body .a { color: var(--accent); }
-    .terminal-body .w { color: #F5F7FA; }
-    .terminal-body .g { color: #7BE495; }
+    .terminal-body .w { color: var(--code-warn); }
+    .terminal-body .g { color: var(--code-good); }
 
     /* ============================================================
        13. COMPARE TABLE
@@ -784,7 +810,7 @@
       width: 100%;
       min-width: 780px;
       border-collapse: collapse;
-      font-size: .875rem;
+      font-size: .93rem;
     }
     table.compare th,
     table.compare td {
@@ -807,7 +833,7 @@
     table.compare thead th.vx { color: var(--ink); }
     table.compare tbody th {
       font-weight: 500;
-      font-size: .85rem;
+      font-size: .91rem;
       color: var(--ink-2);
       white-space: nowrap;
     }
@@ -833,7 +859,7 @@
       flex-shrink: 0;
       background: var(--ink-3);
     }
-    .cell.y::before { background: var(--accent); }
+    .cell.y::before { background: var(--accent-text); }
     .cell.n::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
     .cell.m::before { background: #D9A21B; }
     .cell.n { color: var(--ink-3); }
@@ -854,7 +880,7 @@
       letter-spacing: -0.02em;
       margin-bottom: .6rem;
     }
-    .usecase p { font-size: .85rem; color: var(--ink-2); line-height: 1.65; }
+    .usecase p { font-size: .92rem; color: var(--ink-2); line-height: 1.65; }
 
     /* ============================================================
        15. FAQ
@@ -875,7 +901,7 @@
       transition: color .2s ease;
     }
     .faq summary::-webkit-details-marker { display: none; }
-    .faq summary:hover { color: var(--accent); }
+    .faq summary:hover { color: var(--accent-text); }
     .faq summary::after {
       content: '+';
       font-family: 'JetBrains Mono', monospace;
@@ -886,11 +912,11 @@
       line-height: 1;
       transition: color .2s ease;
     }
-    .faq details[open] summary::after { content: '−'; color: var(--accent); }
+    .faq details[open] summary::after { content: '−'; color: var(--accent-text); }
     .faq-body {
       padding: 0 0 1.5rem;
       max-width: 76ch;
-      font-size: .89rem;
+      font-size: .96rem;
       color: var(--ink-2);
       line-height: 1.75;
     }
@@ -925,7 +951,7 @@
       text-wrap: balance;
     }
     .cta p {
-      font-size: clamp(.92rem, 1.2vw, 1.02rem);
+      font-size: clamp(1rem, 1.25vw, 1.1rem);
       line-height: 1.6;
       max-width: 44ch;
       opacity: .72;
@@ -954,7 +980,7 @@
     .cta .btn--outline {
       background: transparent;
       color: var(--accent-ink);
-      border-color: rgba(10, 10, 11, .3);
+      border-color: rgba(10, 10, 11, .5);
     }
     .cta .btn--outline:hover { background: rgba(10, 10, 11, .08); color: var(--accent-ink); }
 
@@ -975,7 +1001,7 @@
     }
     .footer-brand .brand { margin-bottom: 1.1rem; }
     .footer-brand p {
-      font-size: .85rem;
+      font-size: .9rem;
       color: var(--ink-2);
       line-height: 1.65;
       max-width: 34ch;
@@ -991,7 +1017,7 @@
     }
     .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .65rem; }
     .footer-col a, .footer-col button {
-      font-size: .855rem;
+      font-size: .9rem;
       color: var(--ink-2);
       text-decoration: none;
       background: none;
@@ -999,9 +1025,12 @@
       padding: 0;
       cursor: pointer;
       text-align: left;
+      /* The contact address is one long unbreakable string. Let it wrap
+         inside its column instead of pushing the page sideways. */
+      overflow-wrap: anywhere;
       transition: color .18s ease;
     }
-    .footer-col a:hover, .footer-col button:hover { color: var(--accent); }
+    .footer-col a:hover, .footer-col button:hover { color: var(--accent-text); }
 
     .footer-bottom {
       border-top: 1px solid var(--line);
@@ -1048,10 +1077,10 @@
       letter-spacing: -0.04em;
       margin-bottom: .45rem;
     }
-    .studio-head p { font-size: .875rem; color: var(--ink-2); max-width: 56ch; line-height: 1.6; }
+    .studio-head p { font-size: .94rem; color: var(--ink-2); max-width: 56ch; line-height: 1.6; }
     .studio-head .mono { display: block; margin-bottom: .9rem; }
 
-    /* Tab bar — underline, not pills */
+    /* Tab bar: underline, not pills */
     .tool-tabs {
       display: flex;
       overflow-x: auto;
@@ -1069,7 +1098,7 @@
       border: none;
       border-bottom: 2px solid transparent;
       color: var(--ink-2);
-      font-size: .84rem;
+      font-size: .88rem;
       font-weight: 500;
       padding: .8rem .1rem;
       margin-right: 1.6rem;
@@ -1083,14 +1112,14 @@
     }
     .tool-tab:last-child { margin-right: 0; }
     .tool-tab:hover { color: var(--ink); }
-    .tool-tab.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+    .tool-tab.active { color: var(--ink); border-bottom-color: var(--accent-text); font-weight: 600; }
     .tool-tab i {
       font-style: normal;
       font-family: 'JetBrains Mono', monospace;
       font-size: .64rem;
       color: var(--ink-3);
     }
-    .tool-tab.active i { color: var(--accent); }
+    .tool-tab.active i { color: var(--accent-text); }
 
     .studio-layout {
       display: grid;
@@ -1124,7 +1153,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: .78rem;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--accent-text);
       padding-top: .2rem;
     }
     .panel-meta h2 {
@@ -1133,9 +1162,288 @@
       letter-spacing: -0.03em;
       margin-bottom: .4rem;
     }
-    .panel-meta p { font-size: .865rem; color: var(--ink-2); line-height: 1.6; max-width: 62ch; }
+    .panel-meta p { font-size: .93rem; color: var(--ink-2); line-height: 1.6; max-width: 62ch; }
 
-    /* Dropzones — flat, dashed hairline */
+    /* ============================================================
+       Editing deck: a real transport and timeline over the clip
+       the user has loaded. Monitor + ruler + waveform/filmstrip,
+       with a draggable playhead and a draggable in/out range.
+       Hidden until something is loaded, so the studio still opens
+       straight onto the tool list.
+       ============================================================ */
+    .editor {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg-panel);
+      margin-bottom: 1.75rem;
+      overflow: hidden;
+    }
+    .editor.is-open { display: block; }
+
+    .ed-head {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .6rem .85rem;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .ed-head .mono { color: var(--ink-3); flex-shrink: 0; }
+    .ed-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--ink-2);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1 1 12ch;
+    }
+    .ed-head-actions { display: flex; gap: .4rem; flex-shrink: 0; }
+
+    /* Small square control, used for the transport row and the header */
+    .ed-btn {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: none;
+      border: 1px solid var(--line-hard);
+      border-radius: 3px;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: color .16s ease, border-color .16s ease, background-color .16s ease;
+    }
+    .ed-btn:hover { color: var(--ink); border-color: var(--ink-2); background: var(--bg-raise); }
+    .ed-btn svg { width: 14px; height: 14px; display: block; }
+    .ed-btn.is-on { color: var(--accent-text); border-color: var(--accent-text); }
+    .ed-btn--wide {
+      width: auto;
+      height: 30px;
+      padding: 0 .6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .64rem;
+      letter-spacing: .06em;
+      gap: .35rem;
+    }
+
+    .ed-body {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 1rem;
+      padding: .85rem;
+    }
+    @media (max-width: 1000px) { .ed-body { grid-template-columns: minmax(0, 1fr); } }
+
+    /* ---- monitor ---- */
+    .ed-monitor {
+      position: relative;
+      background: var(--bg-sunk);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+    .ed-monitor video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: var(--bg-sunk);
+    }
+    .ed-monitor:not(.has-picture) video { position: absolute; inset: 0; opacity: 0; }
+
+    /* What an audio-only file shows instead of a picture: the name, and a
+       level meter read off the decoded samples as the clip plays. */
+    .ed-scope { display: none; width: 100%; padding: 1rem 1.15rem; text-align: center; }
+    .ed-monitor:not(.has-picture) .ed-scope { display: block; }
+    .ed-scope-ico { color: var(--ink-3); margin-bottom: .5rem; }
+    .ed-scope-ico svg { width: 26px; height: 26px; }
+    .ed-scope-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--ink-2);
+      word-break: break-all;
+      line-height: 1.5;
+      margin-bottom: .9rem;
+    }
+    .ed-meter {
+      height: 8px;
+      border: 1px solid var(--line-hard);
+      border-radius: 2px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .ed-meter i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--accent-text);
+      transition: width .06s linear;
+    }
+    .ed-meter-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      color: var(--ink-3);
+      display: block;
+      margin-top: .45rem;
+    }
+
+    /* ---- timeline ---- */
+    .ed-timeline { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+
+    .ed-transport { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
+    .ed-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-left: .35rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .ed-dur {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ed-ruler {
+      position: relative;
+      height: 18px;
+      border-bottom: 1px solid var(--line);
+      cursor: ew-resize;
+      user-select: none;
+      touch-action: none;
+    }
+    .ed-ruler span {
+      position: absolute;
+      top: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .64rem;
+      color: var(--ink-3);
+      transform: translateX(-50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .ed-ruler span::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -4px;
+      width: 1px;
+      height: 4px;
+      background: var(--line-hard);
+    }
+
+    .ed-track {
+      position: relative;
+      height: 112px;
+      background: var(--bg-sunk);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: crosshair;
+      user-select: none;
+      touch-action: none;
+    }
+    .ed-track canvas { display: block; width: 100%; height: 100%; }
+
+    /* The in/out range. Sits above the canvas, tinted with --accent-dim and
+       edged in --accent-text so it reads on both fields. */
+    .ed-sel {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      display: none;
+      background: var(--accent-dim);
+      border-left: 1px solid var(--accent-text);
+      border-right: 1px solid var(--accent-text);
+      cursor: grab;
+    }
+    .ed-sel.is-set { display: block; }
+    .ed-sel.is-drag { cursor: grabbing; }
+    .ed-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 9px;
+      cursor: ew-resize;
+    }
+    .ed-handle--l { left: -5px; }
+    .ed-handle--r { right: -5px; }
+    .ed-handle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      width: 3px;
+      height: 18px;
+      margin-top: -9px;
+      background: var(--accent-text);
+      border-radius: 1px;
+    }
+
+    .ed-head-mark {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--accent-text);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .ed-head-mark::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -3px;
+      width: 7px;
+      height: 7px;
+      background: var(--accent-text);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    /* ---- readout row ---- */
+    .ed-readout {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      padding-top: .35rem;
+    }
+    .ed-stat { display: flex; flex-direction: column; gap: .15rem; }
+    .ed-stat span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .56rem;
+      letter-spacing: .12em;
+      color: var(--ink-3);
+    }
+    .ed-stat b {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .ed-use { margin-left: auto; }
+    @media (max-width: 640px) { .ed-use { margin-left: 0; width: 100%; } }
+
+    .ed-hint {
+      font-family: 'JetBrains Mono', monospace;
+      /* This line is the deck's only instructions, so it reads at body size,
+         not at label size. */
+      font-size: .78rem;
+      color: var(--ink-3);
+      letter-spacing: .04em;
+    }
+
+    /* Dropzones: flat, dashed hairline */
     .dropzone {
       border: 1px dashed var(--line-hard);
       border-radius: 4px;
@@ -1149,14 +1457,14 @@
       gap: .4rem;
       transition: border-color .2s ease, background-color .2s ease;
     }
-    .dropzone:hover { border-color: var(--accent); background: var(--bg-raise); }
-    .dropzone.is-loaded { border-style: solid; border-color: var(--accent); }
+    .dropzone:hover { border-color: var(--accent-text); background: var(--bg-raise); }
+    .dropzone.is-loaded { border-style: solid; border-color: var(--accent-text); }
     .dropzone input { display: none; }
     .drop-ico { color: var(--ink-3); margin-bottom: .5rem; transition: color .2s ease; }
-    .dropzone:hover .drop-ico { color: var(--accent); }
+    .dropzone:hover .drop-ico { color: var(--accent-text); }
     .drop-ico svg { width: 22px; height: 22px; }
-    .drop-title { font-size: .9rem; font-weight: 600; }
-    .drop-hint { font-size: .775rem; color: var(--ink-3); }
+    .drop-title { font-size: .95rem; font-weight: 600; }
+    .drop-hint { font-size: .83rem; color: var(--ink-3); }
     .file-badge {
       display: none;
       margin-top: .7rem;
@@ -1165,7 +1473,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       font-family: 'JetBrains Mono', monospace;
-      font-size: .72rem;
+      font-size: .78rem;
       color: var(--ink);
       background: var(--accent-dim);
       border: 1px solid var(--accent-line);
@@ -1181,7 +1489,7 @@
     .field { display: flex; flex-direction: column; gap: .45rem; }
     .field label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: .66rem;
+      font-size: .7rem;
       font-weight: 500;
       letter-spacing: .09em;
       text-transform: uppercase;
@@ -1199,7 +1507,7 @@
       width: 100%;
       transition: border-color .18s ease;
     }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--accent); }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: var(--accent-text); }
     select {
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B8B90' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -1241,7 +1549,7 @@
       border-radius: 4px;
       padding: 1.1rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: .75rem;
+      font-size: .8rem;
       line-height: 1.7;
       color: var(--code-ink);
       max-height: 300px;
@@ -1258,7 +1566,7 @@
       padding-top: 1.35rem;
       border-top: 1px solid var(--line);
       font-family: 'JetBrains Mono', monospace;
-      font-size: .72rem;
+      font-size: .78rem;
       color: var(--ink-2);
     }
     .status-left { display: flex; align-items: center; gap: .55rem; }
@@ -1266,12 +1574,12 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #D9A21B;
+      background: var(--dot-idle);
       flex-shrink: 0;
       transition: background-color .2s ease;
     }
-    .status-dot.ready { background: var(--accent); }
-    .status-dot.busy { background: #4B8BFF; animation: pulse 1s infinite; }
+    .status-dot.ready { background: var(--accent-text); }
+    .status-dot.busy { background: var(--dot-busy); animation: pulse 1s infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
 
     /* Studio side rail */
@@ -1286,14 +1594,14 @@
       color: var(--ink-3);
       margin-bottom: .9rem;
     }
-    .rail-block p { font-size: .82rem; color: var(--ink-2); line-height: 1.65; }
+    .rail-block p { font-size: .89rem; color: var(--ink-2); line-height: 1.65; }
     .rail-block p b { color: var(--ink); font-weight: 600; }
     .rail-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
     .rail-list li {
       display: grid;
       grid-template-columns: .9rem minmax(0, 1fr);
       gap: .6rem;
-      font-size: .8rem;
+      font-size: .87rem;
       color: var(--ink-2);
       line-height: 1.55;
     }
@@ -1301,7 +1609,7 @@
       content: '';
       width: 9px;
       height: 1px;
-      background: var(--accent);
+      background: var(--accent-text);
       margin-top: .55rem;
     }
 
@@ -1437,7 +1745,7 @@
 
             <p class="hero-desc">
               Eleven studio-grade tools that open right here in your browser. Trim, compress, convert,
-              fix and save your videos and audio — with <b>nothing ever sent to a server</b>.
+              fix and save your videos and audio, with <b>nothing ever sent to a server</b>.
             </p>
 
             <div class="hero-actions">
@@ -1496,8 +1804,8 @@
 
             <div class="deck-foot">
               <span class="mono">Your file</span>
-              <span class="mono">Trim — instant</span>
-              <span class="mono">Compress — takes a while</span>
+              <span class="mono">Trim: instant</span>
+              <span class="mono">Compress: takes a while</span>
               <span class="spacer"></span>
               <span class="mono">0 bytes uploaded</span>
             </div>
@@ -1521,7 +1829,7 @@
           <div class="number reveal">
             <span class="mono">Tools</span>
             <b><span data-count="11">0</span></b>
-            <p>Trim, compress, convert, fix and save — all on one page.</p>
+            <p>Trim, compress, convert, fix and save, all on one page.</p>
           </div>
           <div class="number reveal" style="--d:70ms">
             <span class="mono">Bytes uploaded</span>
@@ -1547,7 +1855,7 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">01 — Workflow</span>
+            <span class="mono">01 / Workflow</span>
             <h2 class="section-title">Three steps, and <em>no waiting room.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
@@ -1559,7 +1867,7 @@
           <article class="step reveal">
             <span class="step-idx">01</span>
             <h3>Drop a file</h3>
-            <p>Your browser opens it directly — there's no upload step at all. No progress bar crawling toward a data centre on another continent.</p>
+            <p>Your browser opens it directly. There's no upload step at all. No progress bar crawling toward a data centre on another continent.</p>
           </article>
           <article class="step reveal" style="--d:90ms">
             <span class="step-idx">02</span>
@@ -1580,7 +1888,7 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">02 — The tools</span>
+            <span class="mono">02 / The tools</span>
             <h2 class="section-title">Eleven tools that used to <em>need a desktop app.</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
@@ -1593,7 +1901,7 @@
             <span class="engine-idx">01</span>
             <span>
               <span class="engine-name">Combine video &amp; audio <code>Instant</code></span>
-              <span class="engine-desc">Put a video and a separate audio track together into one file. Perfect when you've downloaded a video and have a better-quality recording of the same thing — the picture stays exactly as it was.</span>
+              <span class="engine-desc">Put a video and a separate audio track together into one file. Perfect when you've downloaded a video and have a better-quality recording of the same thing. The picture stays exactly as it was.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1602,7 +1910,7 @@
             <span class="engine-idx">02</span>
             <span>
               <span class="engine-name">Check what's inside a file <code>Instant</code></span>
-              <span class="engine-desc">See exactly what a video or audio file contains — how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</span>
+              <span class="engine-desc">See exactly what a video or audio file contains: how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1620,7 +1928,7 @@
             <span class="engine-idx">04</span>
             <span>
               <span class="engine-name">Save the audio on its own <code>Usually quick</code></span>
-              <span class="engine-desc">Pull the sound out of a video as an MP3 or M4A — for listening offline, or for feeding into a transcription tool.</span>
+              <span class="engine-desc">Pull the sound out of a video as an MP3 or M4A, for listening offline or for feeding into a transcription tool.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1629,7 +1937,7 @@
             <span class="engine-idx">05</span>
             <span>
               <span class="engine-name">Shrink a video to a size limit <code>Takes a while</code></span>
-              <span class="engine-desc">Tell it the size you need — 25 MB for Discord, 16 MB for WhatsApp — and it works out how to fit your video inside it.</span>
+              <span class="engine-desc">Tell it the size you need (25 MB for Discord, 16 MB for WhatsApp) and it works out how to fit your video inside it.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1674,7 +1982,7 @@
             <span class="engine-idx">10</span>
             <span>
               <span class="engine-name">Remove the sound <code>Instant</code></span>
-              <span class="engine-desc">Take the audio off a video completely — for background footage, for muting a recording, or when you only need the picture.</span>
+              <span class="engine-desc">Take the audio off a video completely, for background footage, for muting a recording, or when you only need the picture.</span>
             </span>
             <span class="engine-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </button>
@@ -1689,7 +1997,7 @@
           </button>
 
           <div class="engine" style="cursor:default;border-bottom:1px solid var(--line)">
-            <span class="engine-idx">—</span>
+            <span class="engine-idx">ALL</span>
             <span>
               <span class="engine-name">All eleven in one place</span>
               <span class="engine-desc">Switch between any of them without reloading the page or losing your place.</span>
@@ -1705,7 +2013,7 @@
       <div class="shell">
         <div class="showcase">
           <div class="reveal">
-            <span class="mono" style="display:block;margin-bottom:1.25rem;">03 — Why it's better</span>
+            <span class="mono" style="display:block;margin-bottom:1.25rem;">03 / Why it's better</span>
             <h2 class="section-title" style="margin-bottom:1.1rem;">It works the way <em>you'd expect.</em></h2>
             <p class="section-note">
               Most online converters make you wait for an upload, keep a copy of your file on their servers, then limit how many you can do. Vortex skips all of that by doing the work on your own machine.
@@ -1746,11 +2054,11 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">04 — Comparison</span>
+            <span class="mono">04 / Comparison</span>
             <h2 class="section-title">Why not just use <em>a cloud converter?</em></h2>
           </div>
           <p class="section-note reveal" style="--d:80ms">
-            Because you're handing a gigabyte of footage to a machine you don't control, then waiting in a queue for it back — and paying per file for the privilege.
+            Because you're handing a gigabyte of footage to a machine you don't control, then waiting in a queue for it back, and paying per file for the privilege.
           </p>
         </div>
 
@@ -1803,7 +2111,7 @@
               </tr>
               <tr>
                 <th scope="row">Time to first result</th>
-                <td class="vx-col"><span class="cell y">Instant — no upload</span></td>
+                <td class="vx-col"><span class="cell y">Instant, no upload</span></td>
                 <td><span class="cell n">Upload, queue, then download</span></td>
                 <td><span class="cell m">Open it, then import</span></td>
               </tr>
@@ -1818,7 +2126,7 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">05 — Who it's for</span>
+            <span class="mono">05 / Who it's for</span>
             <h2 class="section-title">Built for the jobs <em>people actually have.</em></h2>
           </div>
         </div>
@@ -1827,12 +2135,12 @@
           <article class="usecase reveal">
             <span class="mono">Students &amp; lecturers</span>
             <h3>Split a three-hour recording</h3>
-            <p>Cut a lecture into per-topic clips, or strip the audio into an MP3 for the commute — without a two-gigabyte upload first.</p>
+            <p>Cut a lecture into per-topic clips, or strip the audio into an MP3 for the commute, without a two-gigabyte upload first.</p>
           </article>
           <article class="usecase reveal" style="--d:70ms">
             <span class="mono">Creators &amp; editors</span>
             <h3>Re-frame and re-track</h3>
-            <p>Crop widescreen footage for Shorts, pair a downloaded video with a better audio track, and save thumbnail images — all in one sitting.</p>
+            <p>Crop widescreen footage for Shorts, pair a downloaded video with a better audio track, and save thumbnail images, all in one sitting.</p>
           </article>
           <article class="usecase reveal" style="--d:140ms">
             <span class="mono">Podcasters</span>
@@ -1842,7 +2150,7 @@
           <article class="usecase reveal" style="--d:210ms">
             <span class="mono">Developers &amp; QA</span>
             <h3>Check a file, install nothing</h3>
-            <p>Check exactly what's inside a file on a machine where you can't install anything — and confirm what a video or audio file really holds.</p>
+            <p>Check exactly what's inside a file on a machine where you can't install anything, and confirm what a video or audio file really holds.</p>
           </article>
         </div>
       </div>
@@ -1853,7 +2161,7 @@
       <div class="shell">
         <div class="section-head">
           <div class="reveal">
-            <span class="mono">06 — Questions</span>
+            <span class="mono">06 / Questions</span>
             <h2 class="section-title">The things people <em>ask first.</em></h2>
           </div>
         </div>
@@ -1876,14 +2184,14 @@
           <details class="reveal" style="--d:100ms">
             <summary>Why does the first load take a few seconds?</summary>
             <div class="faq-body">
-              The page is downloading the tools that do the processing — around 25–30 MB. That happens once; after that your browser keeps them, and the page opens straight away.
+              The page is downloading the tools that do the processing, around 25–30 MB. That happens once; after that your browser keeps them, and the page opens straight away.
             </div>
           </details>
 
           <details class="reveal" style="--d:150ms">
             <summary>What's the maximum file size I can process?</summary>
             <div class="faq-body">
-              There's no fixed limit, but everything is handled in your device's memory, so very large files can run into what your browser allows. As a rough guide, files up to a couple of gigabytes are fine — and jobs like trimming, combining or removing sound are far lighter than compressing.
+              There's no fixed limit, but everything is handled in your device's memory, so very large files can run into what your browser allows. As a rough guide, files up to a couple of gigabytes are fine, and jobs like trimming, combining or removing sound are far lighter than compressing.
             </div>
           </details>
 
@@ -1897,7 +2205,7 @@
           <details class="reveal" style="--d:250ms">
             <summary>Why do some operations finish instantly and others take minutes?</summary>
             <div class="faq-body">
-              It depends on whether the picture has to be rebuilt. Trimming, combining and removing sound only rearrange what's already in your file, so they finish in seconds and keep the quality. Compressing, making a video vertical and creating GIFs have to rebuild every frame, which genuinely takes time — the same as it would in a desktop editor.
+              It depends on whether the picture has to be rebuilt. Trimming, combining and removing sound only rearrange what's already in your file, so they finish in seconds and keep the quality. Compressing, making a video vertical and creating GIFs have to rebuild every frame, which genuinely takes time, the same as it would in a desktop editor.
             </div>
           </details>
         </div>
@@ -1934,7 +2242,7 @@
       <div>
         <span class="mono">Workspace</span>
         <h1>Media Studio</h1>
-        <p>Pick a tool, choose a file, and let it run. Everything happens on your own device — nothing is uploaded.</p>
+        <p>Pick a tool, choose a file, and let it run. Everything happens on your own device. Nothing is uploaded.</p>
       </div>
       <button class="btn btn--ghost" onclick="navigateTo('landing')">← Back to overview</button>
     </div>
@@ -1953,6 +2261,80 @@
       <button class="tool-tab" data-tool="tool-snap" onclick="switchTool('tool-snap')"><i>11</i> Save a frame</button>
     </nav>
 
+    <!-- Editing deck. Hidden until a file is loaded, either from any tool's
+         dropzone or from the Open button here. Monitor, time ruler, and a
+         waveform (audio) or filmstrip (video) you can drag a range across. -->
+    <section class="editor" id="editor" aria-label="Editing deck">
+      <div class="ed-head">
+        <span class="mono">Editing deck</span>
+        <span class="ed-name" id="ed-name">No file loaded</span>
+        <div class="ed-head-actions">
+          <button class="ed-btn ed-btn--wide" id="ed-open" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M12 5v14M5 12h14"/></svg>
+            Open a file
+          </button>
+          <button class="ed-btn ed-btn--wide" id="ed-close" type="button">Close deck</button>
+        </div>
+      </div>
+
+      <div class="ed-body">
+        <div class="ed-monitor" id="ed-monitor">
+          <video id="ed-video" playsinline preload="metadata"></video>
+          <div class="ed-scope">
+            <div class="ed-scope-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square">
+                <path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="16" r="2.6"/>
+              </svg>
+            </div>
+            <div class="ed-scope-name" id="ed-scope-name">No picture in this file</div>
+            <div class="ed-meter"><i id="ed-meter"></i></div>
+            <span class="ed-meter-tag">LEVEL</span>
+          </div>
+        </div>
+
+        <div class="ed-timeline">
+          <div class="ed-transport">
+            <button class="ed-btn" id="ed-to-start" type="button" title="Go to the start">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M6 5v14M18 5.5l-9 6.5 9 6.5z"/></svg>
+            </button>
+            <button class="ed-btn" id="ed-play" type="button" title="Play or pause (space)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5l12 7.5-12 7.5z"/></svg>
+            </button>
+            <button class="ed-btn" id="ed-to-end" type="button" title="Go to the end">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M18 5v14M6 5.5l9 6.5-9 6.5z"/></svg>
+            </button>
+            <button class="ed-btn ed-btn--wide" id="ed-set-in" type="button" title="Start the range at the playhead (I)">SET IN</button>
+            <button class="ed-btn ed-btn--wide" id="ed-set-out" type="button" title="End the range at the playhead (O)">SET OUT</button>
+            <button class="ed-btn ed-btn--wide" id="ed-loop" type="button" title="Play the range over and over">LOOP</button>
+            <span class="ed-clock" id="ed-clock">0:00.000</span>
+            <span class="ed-dur" id="ed-dur">/ 0:00.000</span>
+          </div>
+
+          <div class="ed-ruler" id="ed-ruler"></div>
+
+          <div class="ed-track" id="ed-track">
+            <canvas id="ed-canvas"></canvas>
+            <div class="ed-sel" id="ed-sel">
+              <span class="ed-handle ed-handle--l" id="ed-h-l"></span>
+              <span class="ed-handle ed-handle--r" id="ed-h-r"></span>
+            </div>
+            <div class="ed-head-mark" id="ed-mark"></div>
+          </div>
+
+          <div class="ed-readout">
+            <div class="ed-stat"><span>RANGE START</span><b id="ed-in">0:00.000</b></div>
+            <div class="ed-stat"><span>RANGE END</span><b id="ed-out">0:00.000</b></div>
+            <div class="ed-stat"><span>LENGTH</span><b id="ed-len">0:00.000</b></div>
+            <button class="ed-btn ed-btn--wide ed-use" id="ed-use" type="button">Use this range in Trim</button>
+          </div>
+
+          <span class="ed-hint" id="ed-hint">Drag across the track to set a range. Drag the ruler to scrub. Double-click clears it. Space plays and pauses.</span>
+        </div>
+      </div>
+
+      <input type="file" id="ed-file" accept="video/*,audio/*" hidden>
+    </section>
+
     <div class="studio-layout">
       <div class="studio-card">
 
@@ -1962,7 +2344,7 @@
             <span class="panel-idx">01</span>
             <div>
               <h2>Combine video &amp; audio</h2>
-              <p>Put a video and a separate audio track together into one file. This is the tool for when you've downloaded a video and have a better-quality recording of the same thing — the picture stays exactly as it was.</p>
+              <p>Put a video and a separate audio track together into one file. This is the tool for when you've downloaded a video and have a better-quality recording of the same thing. The picture stays exactly as it was.</p>
             </div>
           </div>
 
@@ -2002,7 +2384,7 @@
             <span class="panel-idx">02</span>
             <div>
               <h2>Check what's inside a file</h2>
-              <p>See exactly what a video or audio file contains — how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</p>
+              <p>See exactly what a video or audio file contains: how long it is, how big it is, and the quality of the picture and sound. Useful before you decide what to do with it.</p>
             </div>
           </div>
 
@@ -2013,7 +2395,7 @@
               </svg>
             </div>
             <span class="drop-title">Choose any video or audio file</span>
-            <span class="drop-hint">Nothing is changed — this only reads it</span>
+            <span class="drop-hint">Nothing is changed. This only reads it.</span>
             <input type="file" id="inspect-in">
             <div id="inspect-tag" class="file-badge"></div>
           </div>
@@ -2042,7 +2424,7 @@
               </svg>
             </div>
             <span class="drop-title">Choose the video to trim</span>
-            <span class="drop-hint">Any length — trimming is instant</span>
+            <span class="drop-hint">Any length. Trimming is instant.</span>
             <input type="file" id="trim-in" accept="video/*">
             <div id="trim-tag" class="file-badge"></div>
           </div>
@@ -2089,8 +2471,8 @@
           <div class="field">
             <label for="extract-format">Save it as</label>
             <select id="extract-format">
-              <option value="mp3">MP3 — smaller file, sounds great</option>
-              <option value="m4a">M4A — keeps the original quality, instant</option>
+              <option value="mp3">MP3 (smaller file, sounds great)</option>
+              <option value="m4a">M4A (keeps the original quality, instant)</option>
             </select>
           </div>
 
@@ -2106,7 +2488,7 @@
             <span class="panel-idx">05</span>
             <div>
               <h2>Shrink a video to a size limit</h2>
-              <p>Tell it the size you need and it works out how to fit your video inside it — for when a site or app turns a file away for being too big.</p>
+              <p>Tell it the size you need and it works out how to fit your video inside it, for when a site or app turns a file away for being too big.</p>
             </div>
           </div>
 
@@ -2125,9 +2507,9 @@
           <div class="field">
             <label for="shrink-target">Fit it inside</label>
             <select id="shrink-target">
-              <option value="24">25 MB — the Discord limit</option>
-              <option value="15">16 MB — the WhatsApp limit</option>
-              <option value="48">50 MB — for sending by email</option>
+              <option value="24">25 MB (the Discord limit)</option>
+              <option value="15">16 MB (the WhatsApp limit)</option>
+              <option value="48">50 MB (for sending by email)</option>
             </select>
           </div>
 
@@ -2221,7 +2603,7 @@
               </svg>
             </div>
             <span class="drop-title">Choose a short video</span>
-            <span class="drop-hint">Keep it under 15 seconds — GIFs get big fast</span>
+            <span class="drop-hint">Keep it under 15 seconds. GIFs get big fast.</span>
             <input type="file" id="gif-in" accept="video/*">
             <div id="gif-tag" class="file-badge"></div>
           </div>
@@ -2282,7 +2664,7 @@
             <span class="panel-idx">10</span>
             <div>
               <h2>Remove the sound</h2>
-              <p>Take the audio off a video completely — for background footage, for muting a recording, or when you only need the picture.</p>
+              <p>Take the audio off a video completely, for background footage, for muting a recording, or when you only need the picture.</p>
             </div>
           </div>
 
@@ -2343,7 +2725,7 @@
             <span class="status-dot" id="engine-dot"></span>
             <span id="engine-msg">Getting things ready…</span>
           </div>
-          <span>Nothing is uploaded — ever</span>
+          <span>Nothing is uploaded. Ever.</span>
         </div>
 
       </div>
@@ -2678,12 +3060,12 @@
         await ffmpeg.load(config);
 
         engineDot.className = 'status-dot ready';
-        engineMsg.innerText = 'Ready — everything runs on your device';
+        engineMsg.innerText = 'Ready. Everything runs on your device.';
         isReady = true;
         refreshDropzones();
       } catch (err) {
         engineDot.className = 'status-dot';
-        engineMsg.innerText = "Couldn't get started — check your connection and reload the page.";
+        engineMsg.innerText = "Couldn't get started. Check your connection and reload the page.";
         console.error(err);
       }
     }
@@ -2708,6 +3090,9 @@
           tag.style.display = 'inline-block';
           tag.innerText = el.files[0].name;
           if (zone) zone.classList.add('is-loaded');
+          // Whatever the user picks, in whichever tool, becomes the clip the
+          // editing deck is showing. No separate load step.
+          if (window.__editorLoad) window.__editorLoad(el.files[0]);
         } else if (zone) {
           zone.classList.remove('is-loaded');
           tag.style.display = 'none';
@@ -2738,6 +3123,541 @@
     bindDropzone('mute-in', 'mute-tag', 'btn-run-mute');
     bindDropzone('snap-in', 'snap-tag', 'btn-run-snap');
 
+    /* ============================================================
+       EDITING DECK
+       Everything here reads the real file. The waveform is drawn from
+       decoded samples, the filmstrip from frames pulled off the video
+       element, and the transport drives that element directly. Nothing
+       is approximated from the file name or size.
+       ============================================================ */
+    (function editingDeck() {
+      const root = document.getElementById('editor');
+      if (!root) return;
+
+      const video     = document.getElementById('ed-video');
+      const canvas    = document.getElementById('ed-canvas');
+      const track     = document.getElementById('ed-track');
+      const ruler     = document.getElementById('ed-ruler');
+      const sel       = document.getElementById('ed-sel');
+      const hL        = document.getElementById('ed-h-l');
+      const hR        = document.getElementById('ed-h-r');
+      const mark      = document.getElementById('ed-mark');
+      const clockEl   = document.getElementById('ed-clock');
+      const durEl     = document.getElementById('ed-dur');
+      const inEl      = document.getElementById('ed-in');
+      const outEl     = document.getElementById('ed-out');
+      const lenEl     = document.getElementById('ed-len');
+      const nameEl    = document.getElementById('ed-name');
+      const scopeName = document.getElementById('ed-scope-name');
+      const meterEl   = document.getElementById('ed-meter');
+      const monitor   = document.getElementById('ed-monitor');
+      const playBtn   = document.getElementById('ed-play');
+      const loopBtn   = document.getElementById('ed-loop');
+      const studioView= document.getElementById('studio-view');
+      const hintEl    = document.getElementById('ed-hint');
+      const HINT_DEFAULT = hintEl.textContent;
+
+      const PLAY_ICON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4.5l12 7.5-12 7.5z"/></svg>';
+      const PAUSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M8.5 5v14M15.5 5v14"/></svg>';
+
+      let duration = 0;        // seconds, 0 until metadata lands
+      let peaks = null;        // per-column amplitude, one entry per canvas px
+      let audioBuffer = null;  // decoded samples, for the waveform and the meter
+      let filmstrip = [];      // captured video frames, left to right
+      let range = { a: 0, b: 0, set: false };
+      let looping = false;
+      let currentFile = null;
+      let objectURL = null;
+      let loadToken = 0;       // bumped on every load so stale async work bails
+      let rafId = 0;
+      let drag = null;
+
+      const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+      const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+      /* m:ss.mmm, for the clock and the readouts */
+      function fmt(t) {
+        if (!isFinite(t) || t < 0) t = 0;
+        const m = Math.floor(t / 60);
+        const s = Math.floor(t % 60);
+        const ms = Math.round((t - Math.floor(t)) * 1000);
+        return `${m}:${String(s).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+      }
+      /* hh:mm:ss.mmm, which is what the Trim fields and ffmpeg both take */
+      function hms(t) {
+        t = Math.max(0, t || 0);
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${s.toFixed(3).padStart(6, '0')}`;
+      }
+      function once(el, ev) {
+        return new Promise((res, rej) => {
+          const ok = () => { off(); res(); };
+          const no = () => { off(); rej(new Error(ev)); };
+          const off = () => { el.removeEventListener(ev, ok); el.removeEventListener('error', no); };
+          el.addEventListener(ev, ok, { once: true });
+          el.addEventListener('error', no, { once: true });
+        });
+      }
+
+      /* ---------- ruler ---------- */
+      const STEPS = [0.1, 0.25, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600];
+      function buildRuler() {
+        ruler.innerHTML = '';
+        if (!(duration > 0)) return;
+        const px = track.clientWidth || 600;
+        const want = Math.max(2, Math.floor(px / 96));
+        const target = duration / want;
+        let step = STEPS[STEPS.length - 1];
+        for (const s of STEPS) { if (s >= target) { step = s; break; } }
+
+        const add = (t, align) => {
+          const el = document.createElement('span');
+          el.textContent = fmt(t);
+          if (align === 'left') { el.style.left = '0'; el.style.transform = 'none'; }
+          else if (align === 'right') { el.style.left = 'auto'; el.style.right = '0'; el.style.transform = 'none'; }
+          else el.style.left = (t / duration * 100) + '%';
+          ruler.appendChild(el);
+        };
+        add(0, 'left');
+        for (let t = step; t < duration - step * 0.5; t += step) add(t);
+        if (duration > step * 1.5) add(duration, 'right');
+      }
+
+      /* ---------- waveform ---------- */
+      function computePeaks(buf, columns) {
+        const chans = [];
+        for (let c = 0; c < buf.numberOfChannels; c++) chans.push(buf.getChannelData(c));
+        const n = buf.length;
+        const out = new Float32Array(columns);
+        const per = n / columns;
+        for (let i = 0; i < columns; i++) {
+          const start = Math.floor(i * per);
+          const end = Math.min(n, Math.floor((i + 1) * per));
+          // Cap the work per column so a long recording stays responsive.
+          const stride = Math.max(1, Math.floor((end - start) / 1500));
+          let peak = 0;
+          for (let j = start; j < end; j += stride) {
+            for (const d of chans) {
+              const v = d[j] < 0 ? -d[j] : d[j];
+              if (v > peak) peak = v;
+            }
+          }
+          out[i] = peak;
+        }
+        return out;
+      }
+
+      /* ---------- drawing ---------- */
+      function draw() {
+        const w = track.clientWidth, h = track.clientHeight;
+        if (!w || !h) return;
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        const g = canvas.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        g.clearRect(0, 0, w, h);
+
+        const stripH = filmstrip.length ? Math.round(h * 0.56) : 0;
+
+        if (stripH) {
+          const n = filmstrip.length;
+          const cw = w / n;
+          for (let i = 0; i < n; i++) {
+            const f = filmstrip[i];
+            const sc = Math.max(cw / f.width, stripH / f.height);
+            const dw = f.width * sc, dh = f.height * sc;
+            g.drawImage(f, i * cw + (cw - dw) / 2, (stripH - dh) / 2, dw, dh);
+          }
+          g.fillStyle = cssVar('--line');
+          g.fillRect(0, stripH, w, 1);
+        }
+
+        // waveform band
+        const top = stripH, bandH = h - stripH;
+        const mid = top + bandH / 2;
+        const amp = Math.max(4, bandH / 2 - 5);
+        const playedX = duration ? (video.currentTime / duration) * w : 0;
+
+        if (!peaks) {
+          g.strokeStyle = cssVar('--wave');
+          g.globalAlpha = 0.55;
+          g.beginPath(); g.moveTo(0, mid); g.lineTo(w, mid); g.stroke();
+          g.globalAlpha = 1;
+          return;
+        }
+        const np = peaks.length;
+        const played = cssVar('--wave-peak'), rest = cssVar('--wave');
+        for (let x = 0; x < w; x++) {
+          const p = peaks[Math.min(np - 1, Math.floor(x / w * np))];
+          const v = Math.max(0.75, p * amp);
+          g.fillStyle = x <= playedX ? played : rest;
+          g.fillRect(x, mid - v, 1, v * 2);
+        }
+      }
+
+      function resizeCanvas() {
+        const w = track.clientWidth || 600;
+        if (audioBuffer) peaks = computePeaks(audioBuffer, w);
+        buildRuler();
+        draw();
+      }
+
+      /* ---------- playhead + range ---------- */
+      function render() {
+        if (!duration) { mark.style.left = '0%'; return; }
+        mark.style.left = ((video.currentTime || 0) / duration * 100) + '%';
+        clockEl.textContent = fmt(video.currentTime || 0);
+
+        if (range.set) {
+          const a = Math.min(range.a, range.b), b = Math.max(range.a, range.b);
+          sel.classList.add('is-set');
+          sel.style.left = (a / duration * 100) + '%';
+          sel.style.width = ((b - a) / duration * 100) + '%';
+          inEl.textContent = fmt(a);
+          outEl.textContent = fmt(b);
+          lenEl.textContent = fmt(b - a);
+        } else {
+          sel.classList.remove('is-set');
+          inEl.textContent = outEl.textContent = lenEl.textContent = '--';
+        }
+      }
+
+      /* Level read straight off the decoded samples at the playhead. Reading
+         the buffer rather than tapping the audio graph means playback itself
+         is never routed or altered. */
+      function updateMeter() {
+        if (!audioBuffer || video.paused) { meterEl.style.width = '0%'; return; }
+        const sr = audioBuffer.sampleRate;
+        const start = Math.max(0, Math.round(video.currentTime * sr));
+        const len = Math.min(2048, audioBuffer.length - start);
+        if (len <= 0) { meterEl.style.width = '0%'; return; }
+        const d = audioBuffer.getChannelData(0);
+        let sum = 0, n = 0;
+        for (let i = 0; i < len; i += 4) { sum += d[start + i] * d[start + i]; n++; }
+        meterEl.style.width = Math.min(100, Math.round(Math.sqrt(sum / Math.max(1, n)) * 280)) + '%';
+      }
+
+      function frame() {
+        render();
+        updateMeter();
+        if (looping && range.set) {
+          const a = Math.min(range.a, range.b), b = Math.max(range.a, range.b);
+          if (video.currentTime >= b || video.currentTime < a - 0.25) video.currentTime = a;
+        }
+        rafId = requestAnimationFrame(frame);
+      }
+      function startLoop() { if (!rafId) rafId = requestAnimationFrame(frame); }
+      function stopLoop() {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+        render(); updateMeter();
+      }
+
+      /* ---------- transport ---------- */
+      function togglePlay() {
+        if (!video.getAttribute('src')) return;
+        if (video.paused) {
+          if (range.set) {
+            const a = Math.min(range.a, range.b), b = Math.max(range.a, range.b);
+            if (video.currentTime < a || video.currentTime >= b - 0.05) video.currentTime = a;
+          }
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }
+      function setIn() {
+        if (!duration) return;
+        if (range.set) range.a = clamp(video.currentTime, 0, Math.max(range.a, range.b));
+        else range = { a: video.currentTime, b: duration, set: true };
+        render();
+      }
+      function setOut() {
+        if (!duration) return;
+        if (range.set) range.b = clamp(video.currentTime, Math.min(range.a, range.b), duration);
+        else range = { a: 0, b: video.currentTime, set: true };
+        render();
+      }
+      function nudge(d) {
+        if (!duration) return;
+        video.currentTime = clamp((video.currentTime || 0) + d, 0, duration);
+        render();
+      }
+
+      playBtn.addEventListener('click', togglePlay);
+      document.getElementById('ed-to-start').addEventListener('click', () => { video.currentTime = 0; render(); });
+      document.getElementById('ed-to-end').addEventListener('click', () => { video.currentTime = duration; render(); });
+      document.getElementById('ed-set-in').addEventListener('click', setIn);
+      document.getElementById('ed-set-out').addEventListener('click', setOut);
+      loopBtn.addEventListener('click', () => {
+        looping = !looping;
+        loopBtn.classList.toggle('is-on', looping);
+      });
+
+      video.addEventListener('play',  () => { playBtn.innerHTML = PAUSE_ICON; startLoop(); });
+      video.addEventListener('pause', () => { playBtn.innerHTML = PLAY_ICON;  stopLoop(); });
+      video.addEventListener('ended', () => { playBtn.innerHTML = PLAY_ICON;  stopLoop(); });
+
+      /* ---------- pointer: scrub on the ruler, select on the track ---------- */
+      function timeAt(clientX) {
+        const r = track.getBoundingClientRect();
+        return clamp((clientX - r.left) / r.width, 0, 1) * duration;
+      }
+
+      ruler.addEventListener('pointerdown', e => {
+        if (!duration) return;
+        ruler.setPointerCapture(e.pointerId);
+        video.currentTime = timeAt(e.clientX);
+        render();
+        const move = ev => { video.currentTime = timeAt(ev.clientX); render(); };
+        const up = () => {
+          ruler.removeEventListener('pointermove', move);
+          ruler.removeEventListener('pointerup', up);
+          ruler.removeEventListener('pointercancel', up);
+        };
+        ruler.addEventListener('pointermove', move);
+        ruler.addEventListener('pointerup', up);
+        ruler.addEventListener('pointercancel', up);
+      });
+
+      track.addEventListener('pointerdown', e => {
+        if (!duration) return;
+        const t = timeAt(e.clientX);
+        if (e.target === hL)      drag = { mode: 'edge', edge: 'a' };
+        else if (e.target === hR) drag = { mode: 'edge', edge: 'b' };
+        else if (e.target === sel) {
+          drag = { mode: 'move', grab: t, from: { ...range } };
+          sel.classList.add('is-drag');
+        } else {
+          drag = { mode: 'range', anchor: t, moved: false };
+          video.currentTime = t;
+          render();
+        }
+        track.setPointerCapture(e.pointerId);
+      });
+
+      track.addEventListener('pointermove', e => {
+        if (!drag || !duration) return;
+        const t = timeAt(e.clientX);
+        if (drag.mode === 'range') {
+          drag.moved = true;
+          range = { a: drag.anchor, b: t, set: true };
+        } else if (drag.mode === 'edge') {
+          range[drag.edge] = t;
+          range.set = true;
+        } else if (drag.mode === 'move') {
+          const d = t - drag.grab;
+          let a = drag.from.a + d, b = drag.from.b + d;
+          if (a < 0) { b -= a; a = 0; }
+          if (b > duration) { a -= (b - duration); b = duration; }
+          range = { a: Math.max(0, a), b, set: true };
+        }
+        // A press that never moved is a seek, not a zero-length range.
+        if (drag.mode === 'range' && !drag.moved) video.currentTime = t;
+        render();
+      });
+
+      const endDrag = () => {
+        if (drag && drag.mode === 'range' && !drag.moved) { range.set = false; render(); }
+        drag = null;
+        sel.classList.remove('is-drag');
+      };
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+
+      track.addEventListener('dblclick', () => { range = { a: 0, b: 0, set: false }; render(); });
+
+      /* ---------- keyboard ---------- */
+      document.addEventListener('keydown', e => {
+        if (!root.classList.contains('is-open')) return;
+        if (studioView.style.display === 'none') return;
+        const t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        if (e.code === 'Space')            { e.preventDefault(); togglePlay(); }
+        else if (e.key === 'ArrowLeft')    { e.preventDefault(); nudge(e.shiftKey ? -5 : -1); }
+        else if (e.key === 'ArrowRight')   { e.preventDefault(); nudge(e.shiftKey ? 5 : 1); }
+        else if (e.key === 'i' || e.key === 'I') { e.preventDefault(); setIn(); }
+        else if (e.key === 'o' || e.key === 'O') { e.preventDefault(); setOut(); }
+        else if (e.key === 'Home')         { e.preventDefault(); video.currentTime = 0; render(); }
+        else if (e.key === 'End')          { e.preventDefault(); video.currentTime = duration; render(); }
+      });
+
+      /* ---------- loading ---------- */
+      function seekTo(t) {
+        return new Promise((res, rej) => {
+          const ok = () => { off(); res(); };
+          const no = () => { off(); rej(new Error('seek')); };
+          const off = () => {
+            video.removeEventListener('seeked', ok);
+            video.removeEventListener('error', no);
+          };
+          video.addEventListener('seeked', ok, { once: true });
+          video.addEventListener('error', no, { once: true });
+          video.currentTime = t;
+        });
+      }
+
+      /* The strip is built from real frames, eight across the clip. It fills in
+         progressively so a long video does not block the deck from opening. */
+      async function captureFilmstrip(token) {
+        const N = 8, TH = 84;
+        const vw = video.videoWidth, vh = video.videoHeight;
+        if (!vw || !vh) return;
+        const tw = Math.max(24, Math.round(TH * vw / vh));
+        const wasAt = video.currentTime;
+        const frames = [];
+        for (let i = 0; i < N; i++) {
+          if (token !== loadToken) return;
+          try { await seekTo(duration * (i + 0.5) / N); } catch (err) { break; }
+          if (token !== loadToken) return;
+          const c = document.createElement('canvas');
+          c.width = tw; c.height = TH;
+          c.getContext('2d').drawImage(video, 0, 0, tw, TH);
+          frames.push(c);
+          filmstrip = frames.slice();
+          draw();
+        }
+        if (token !== loadToken) return;
+        try { await seekTo(clamp(wasAt, 0, duration)); } catch (err) {}
+        render();
+      }
+
+      /* Decoding gives the true envelope, but float PCM is expensive: an hour of
+         stereo at 48 kHz decodes to well over a gigabyte, which would take the
+         tab down with it. Past the cap the timeline stays flat and says so. */
+      const MAX_DECODE_SECONDS = 900;
+      const MAX_DECODE_BYTES = 250 * 1024 * 1024;
+      const HINT_TOO_LONG = 'This clip is long, so the waveform is not drawn. ' +
+                            'Everything else still works: drag a range, or type the times in Trim.';
+      function setHint(text) { hintEl.textContent = text; }
+
+      async function decodeWaveform(file, token, seconds) {
+        if (file.size > MAX_DECODE_BYTES || seconds > MAX_DECODE_SECONDS) {
+          setHint(HINT_TOO_LONG);
+          return;
+        }
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { setHint(HINT_TOO_LONG); return; }
+        try {
+          const bytes = await file.arrayBuffer();
+          if (token !== loadToken) return;
+          const ctx = new AC();
+          const buf = await ctx.decodeAudioData(bytes);
+          ctx.close();
+          if (token !== loadToken) return;
+          audioBuffer = buf;
+          resizeCanvas();
+        } catch (err) {
+          // The browser could not decode a track: the clip is silent, or its
+          // audio is in a codec it will not read. Flat line, and say why.
+          if (token !== loadToken) return;
+          audioBuffer = null;
+          setHint('This clip has no sound the browser can read, so there is no waveform. ' +
+                  'The range and Trim controls still work.');
+        }
+      }
+
+      async function loadFile(file) {
+        if (!file) return;
+        const token = ++loadToken;
+        stopLoop();
+        video.pause();
+
+        currentFile = file;
+        peaks = null; audioBuffer = null; filmstrip = [];
+        range = { a: 0, b: 0, set: false };
+        looping = false;
+        loopBtn.classList.remove('is-on');
+        playBtn.innerHTML = PLAY_ICON;
+
+        root.classList.add('is-open');
+        nameEl.textContent = file.name;
+        scopeName.textContent = file.name;
+        durEl.textContent = '/ 0:00.000';
+        clockEl.textContent = '0:00.000';
+        inEl.textContent = outEl.textContent = lenEl.textContent = '--';
+        meterEl.style.width = '0%';
+        hintEl.textContent = HINT_DEFAULT;
+
+        if (objectURL) URL.revokeObjectURL(objectURL);
+        objectURL = URL.createObjectURL(file);
+
+        const isVideo = file.type.startsWith('video/') ||
+                        /\.(mp4|m4v|webm|mov|ogv|mkv|avi)$/i.test(file.name);
+        monitor.classList.toggle('has-picture', isVideo);
+
+        const meta = once(video, 'loadedmetadata');
+        video.src = objectURL;
+        try { await meta; } catch (err) { return; }
+        if (token !== loadToken) return;
+
+        duration = isFinite(video.duration) && video.duration > 0 ? video.duration : 0;
+        durEl.textContent = '/ ' + fmt(duration);
+        resizeCanvas();
+        render();
+
+        decodeWaveform(file, token, duration);
+        if (isVideo) captureFilmstrip(token);
+      }
+
+      /* ---------- open / close / hand off ---------- */
+      document.getElementById('ed-open').addEventListener('click', () => {
+        document.getElementById('ed-file').click();
+      });
+      document.getElementById('ed-file').addEventListener('change', e => {
+        if (e.target.files[0]) loadFile(e.target.files[0]);
+        e.target.value = '';
+      });
+      document.getElementById('ed-close').addEventListener('click', () => {
+        loadToken++;
+        stopLoop();
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        if (objectURL) { URL.revokeObjectURL(objectURL); objectURL = null; }
+        root.classList.remove('is-open');
+        duration = 0; peaks = null; audioBuffer = null; filmstrip = [];
+        currentFile = null;
+        range = { a: 0, b: 0, set: false };
+        nameEl.textContent = 'No file loaded';
+      });
+
+      /* Hand the range to the Trim tool, and carry the file across if Trim has
+         not been given one yet. */
+      document.getElementById('ed-use').addEventListener('click', () => {
+        if (!range.set || !duration || !currentFile) return;
+        const a = Math.min(range.a, range.b), b = Math.max(range.a, range.b);
+        document.getElementById('trim-start').value = hms(a);
+        document.getElementById('trim-end').value = hms(b);
+
+        const inp = document.getElementById('trim-in');
+        if (!inp.files.length) {
+          try {
+            const dt = new DataTransfer();
+            dt.items.add(currentFile);
+            inp.files = dt.files;
+            inp.dispatchEvent(new Event('change', { bubbles: true }));
+          } catch (err) { /* DataTransfer is unavailable; the user can drop it in */ }
+        }
+        window.switchTool('tool-trim');
+      });
+
+      /* The canvas colours are read once per paint, so a theme flip has to
+         trigger a repaint. */
+      new MutationObserver(draw).observe(document.documentElement, {
+        attributes: true, attributeFilter: ['data-theme']
+      });
+      let rt = 0;
+      window.addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(resizeCanvas, 140);
+      });
+
+      window.__editorLoad = loadFile;
+    })();
+
     /* ---------- Helpers ---------- */
     async function triggerClientDownload(wasmFile, outputName, mime) {
       const data = await ffmpeg.readFile(wasmFile);
@@ -2758,11 +3678,11 @@
     }
     function setDone(msg) {
       engineDot.className = 'status-dot ready';
-      engineMsg.innerText = msg || 'Done — your file has been saved to your device.';
+      engineMsg.innerText = msg || 'Done. Your file has been saved to your device.';
     }
     function setError(err) {
       engineDot.className = 'status-dot';
-      engineMsg.innerText = 'Something went wrong — try again, or check the file.';
+      engineMsg.innerText = 'Something went wrong. Try again, or check the file.';
       console.error(err);
     }
 
@@ -2789,7 +3709,7 @@
         const f = document.getElementById('inspect-in').files[0];
         await ffmpeg.writeFile('probe.dat', await fetchFile(f));
         await ffmpeg.exec(['-i', 'probe.dat']);
-        setDone('Finished — the details are above.');
+        setDone('Finished. The details are above.');
       } catch (err) { setError(err); }
     });
 
@@ -2866,14 +3786,14 @@
 
     /* ---------- 08 PALETTE GIF ---------- */
     document.getElementById('btn-run-gif').addEventListener('click', async () => {
-      setBusy('Step 1 of 2 — choosing the best colours…');
+      setBusy('Step 1 of 2: choosing the best colours…');
       try {
         const f = document.getElementById('gif-in').files[0];
         const s = document.getElementById('gif-start').value;
         const d = document.getElementById('gif-dur').value;
         await ffmpeg.writeFile('g.mp4', await fetchFile(f));
         await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-vf', 'fps=12,scale=480:-1:flags=lanczos,palettegen', 'pal.png']);
-        setBusy('Step 2 of 2 — building the GIF…');
+        setBusy('Step 2 of 2: building the GIF…');
         await ffmpeg.exec(['-ss', s, '-t', d, '-i', 'g.mp4', '-i', 'pal.png', '-filter_complex', 'fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse', 'out.gif']);
         await triggerClientDownload('out.gif', `loop_${Date.now()}.gif`, 'image/gif');
         setDone();
